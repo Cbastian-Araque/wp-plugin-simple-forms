@@ -19,6 +19,9 @@ define('PLUGIN_FILE', __FILE__); // Obtener la información del plugin (header)
 // Constantes
 require_once('constants.php');
 
+// Archivos de encolamiento
+require_once('enqueue.php');
+
 // Incluir archivos
 require_once plugin_dir_path(__FILE__) . 'src/Database/Options.php';
 require_once plugin_dir_path(__FILE__) . 'src/Database/Migration.php';

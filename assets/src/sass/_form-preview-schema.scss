@@ -1,0 +1,188 @@
+@use './variables' as *;
+
+#form-generate-json {
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 10px $shadow;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 40%;
+  height: fit-content;
+
+  input{
+    border: none;
+    outline: 2px solid $blue;
+    &::placeholder {
+      color: $placeholder;
+    }
+    &:focus-visible, &:active, &:focus-within{
+      outline: 2px solid $blue !important;
+    }
+  }
+
+  .title-form {
+    text-align: left;
+    font-size: 26px;
+    font-weight: 800;
+    display: block;
+    background-color: $secondary;
+    color: $black;
+    width: 100%;
+
+    &::placeholder {
+      color: $placeholder;
+    }
+    &:disabled{
+      cursor: not-allowed;
+      opacity: .5;
+    }
+  }
+
+  .fields-added {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    flex: 1 1 auto;
+    position: relative;
+    &.dragover {
+      background-color: rgba(145, 193, 245, 0.199);
+    }
+  }
+
+  .fields-hidden {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .vs-settings {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      color: $black;
+
+      [type="checkbox"] {
+        width: max-content;
+        display: flex;
+        align-items: center;
+      }
+
+      &.vs-emails, &.vs-btn-label {
+        flex-direction: column;
+        align-items: start;
+
+        input{
+          color: $black;
+          font-size: 14px;
+          padding: 8px;
+          font-weight: 400;
+        }
+      }
+
+      .emails-form {
+        width: 100%;
+      }
+
+      .label-button {
+        width: max-content;
+      }
+    }
+  }
+}
+
+.field-form{
+  padding: 20px 15px;
+  border-bottom: 1px solid $placeholder;
+  display: flex;
+  flex-wrap: wrap;
+  will-change: transform;
+  position: relative;
+  width: 100%;
+  cursor: grab;
+  transition: transform 0.3s ease-in-out;
+
+  &.dragging{
+    opacity: 0;
+  }
+  &:first-child{
+    img.move-up{
+      display: none;
+    }
+  }
+  &:last-child{
+    border: none;
+    img.move-down{
+      display: none;
+    }
+  }
+
+  .vs-field{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1;
+    width: 100%;
+    margin-bottom: 10px;
+
+    .field-label{
+      margin: 0;
+      font-weight: 500;
+      flex: 1 1 auto;
+
+      p{
+        margin-bottom: 0;
+        font-size: inherit;
+      }
+    }
+
+    .field-type{
+      background: $basic1;
+      color: $white;
+      padding: 5px;
+      font-size: 12px;
+      border-radius: 3px;
+      gap: 5px;
+      width: max-content;
+    }
+  }
+
+  button{
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    margin-right: 10px;
+    padding: 7px 12px;
+    font-weight: 600;
+    transition: .3s ease-in-out;
+    &.btn-edit-field{
+      background-color: transparent;
+      outline: 2px solid $blue;
+      color: $blue;
+      &:hover{
+        background-color: $blue;
+        color: $white;
+      }
+    }
+    &.btn-delete-field{
+      background-color: transparent;
+      outline: 2px solid $basic1;
+      color: $basic1;
+      &:hover{
+        background-color: $basic1;
+        color: $white;
+      }
+    }
+  }
+
+  img.btn-move{
+    cursor: pointer;
+    opacity: .5;
+    &:hover{
+      opacity: 1;
+    }
+  }
+}

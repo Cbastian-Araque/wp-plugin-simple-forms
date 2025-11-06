@@ -1,0 +1,69 @@
+@use './variables' as *;
+@use './form-preview-schema' as *;
+@use './form-add_field' as *;
+
+#wpcontent{
+  padding: 0;
+  background-color: $white;
+}
+
+// formulario de creación
+.wrapper-form{
+  padding: 50px 0;
+
+  .container-head{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .logo-creator{
+      filter: drop-shadow(-3px 4px 2px $shadow);
+    }
+
+    h1{
+      font-size: clamp(28px, 4vw, 45px);
+      font-weight: 900;
+      margin: 0;
+      line-height: 1;
+      text-align: center;
+      color: $primary;
+      margin-bottom: 20px;
+    }
+  }
+
+  &.wrapper-create-form{
+    min-height: 100vh;
+
+    .preview-form{
+      display: flex;
+      justify-content: space-between;
+      padding: 20px;
+      border-radius: 10px;
+      width: auto;
+      margin-top: 30px;
+    }
+  }
+
+  [type="checkbox"] {
+    margin: 0 !important;
+  }
+
+  .no-empty{
+    position: relative;
+
+    input, input{
+      position: relative;
+      outline: 2px solid red;
+    }
+
+    &::after{
+      content: 'Por favor diligencia el campo';
+      position: static;
+      right: 0;
+      top: 0;
+      color: red;
+      font-weight: 400;
+      font-size: 13px;
+    }
+  }
+}

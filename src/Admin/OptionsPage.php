@@ -30,6 +30,14 @@ function simple_forms_subp_reports() {
         'forms-reports', // Slug único para la subpágina
         'simpleforms_reports_cb_view' // Función callback que renderiza la página
     );
+    add_submenu_page(
+        'simple-forms',        // Slug de la página padre
+        'Listado de formularios',              // Título de la página
+        'Ver formularios',              // Texto del menú
+        'manage_options',        // Capacidad necesaria
+        'form-listing', // Slug único para la subpágina
+        'simple_forms_listing_cb' // Función callback que renderiza la página
+    );
 }
 
 // Callback para mostrar el contenido de la subpágina
