@@ -59,7 +59,7 @@ class SimpleForms_Migration
   public function drop_tables()
   {
     $tables = [
-      $this->prefix . TABLE_FORMS_SHEMAS,
+      $this->prefix . TABLE_FORMS_SCHEMAS,
       $this->prefix . TABLE_RECORDS,
       $this->prefix . TABLE_ENTRY_META,
       $this->prefix . TABLE_FILES
@@ -78,16 +78,18 @@ class SimpleForms_Migration
    */
   private function get_table_forms_sql()
   {
-    $table_name = $this->prefix . TABLE_FORMS_SHEMAS;
+    $table_name = $this->prefix . TABLE_FORMS_SCHEMAS;
 
     return "CREATE TABLE {$table_name} (
       id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
       form_name VARCHAR(255) NOT NULL,
+      version INT DEFAULT 1,
       form_fields LONGTEXT NOT NULL, -- JSON del formulario
       shortcode VARCHAR(255) DEFAULT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-      PRIMARY KEY (id)
+      PRIMARY KEY (id),
+      UNIQUE KEY form_name_unique (form_name)
     ) {$this->charset};";
   }
 

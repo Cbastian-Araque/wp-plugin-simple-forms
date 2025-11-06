@@ -92,5 +92,59 @@
       "email_list": "tempcorreo@gmail.com,correo1@test.co",
       "db_viewer": []
     }
+  },
+  {
+    "id": "formulario_2",
+    "version": 1,
+    "fields": {
+      "field_1": {
+        "type": "text",
+        "label": "<p>Nombre completo</p>",
+        "required": true,
+        "extras": {
+          "validation_rules": ["LETERS_ONLY"],
+          "div_class": "clase-custom label-custom"
+        }
+      },
+      "field_2": {
+        "type": "text",
+        "label": "<p>Correo electrónico</p>",
+        "required": true
+      },
+      "textarea_1": {
+        "type": "file",
+        "label": "<p>Archvio de prueba</p>",
+        "required": true,
+        "extras": {
+          "accept": "pdf,png,doc,docx",
+          "max_size": "5",
+          "multiple": true
+        }
+      },
+      "field_3": {
+        "type": "select",
+        "label": "<p>Opciones</p>",
+        "required": true,
+        "extras": {
+          "options": {
+            "opcion_1": "Opción 1",
+            "opcion_2": "Opción 2",
+            "opcion_three": "Opción 3"
+          },
+          "select_default": "--Selecciona una opción",
+          "div_class": "clase-personalizada"
+        }
+      }
+    },
+    "submit_btn": {
+      "submit_type": "send",
+      "label": "Enviar datos"
+    },
+    "settings": {
+      "no_pre_footer": false,
+      "titulo": "Prueba",
+      "email_list": "correo1@test.co",
+      "db_viewer": []
+    }
   }
 ]
