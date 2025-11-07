@@ -12,7 +12,7 @@
 
   input{
     border: none;
-    outline: 2px solid $blue;
+    outline: 2px solid $blue50;
     &::placeholder {
       color: $placeholder;
     }
@@ -26,7 +26,7 @@
     font-size: 26px;
     font-weight: 800;
     display: block;
-    background-color: $secondary;
+    background-color: $basic1;
     color: $black;
     width: 100%;
 
@@ -96,6 +96,7 @@
   padding: 20px 15px;
   border-bottom: 1px solid $placeholder;
   display: flex;
+  gap: 8px;
   flex-wrap: wrap;
   will-change: transform;
   position: relative;
@@ -140,41 +141,13 @@
     }
 
     .field-type{
-      background: $basic1;
+      background: $red;
       color: $white;
       padding: 5px;
       font-size: 12px;
       border-radius: 3px;
       gap: 5px;
       width: max-content;
-    }
-  }
-
-  button{
-    border-radius: 5px;
-    border: none;
-    outline: none;
-    margin-right: 10px;
-    padding: 7px 12px;
-    font-weight: 600;
-    transition: .3s ease-in-out;
-    &.btn-edit-field{
-      background-color: transparent;
-      outline: 2px solid $blue;
-      color: $blue;
-      &:hover{
-        background-color: $blue;
-        color: $white;
-      }
-    }
-    &.btn-delete-field{
-      background-color: transparent;
-      outline: 2px solid $basic1;
-      color: $basic1;
-      &:hover{
-        background-color: $basic1;
-        color: $white;
-      }
     }
   }
 

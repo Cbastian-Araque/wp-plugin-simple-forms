@@ -87,10 +87,8 @@
       "label": "Probar envío"
     },
     "settings": {
-      "no_pre_footer": false,
       "titulo": "Prueba",
-      "email_list": "tempcorreo@gmail.com,correo1@test.co",
-      "db_viewer": []
+      "email_list": "tempcorreo@gmail.com,correo1@test.co"
     }
   },
   {
@@ -141,10 +139,8 @@
       "label": "Enviar datos"
     },
     "settings": {
-      "no_pre_footer": false,
-      "titulo": "Prueba",
-      "email_list": "correo1@test.co",
-      "db_viewer": []
+      "titulo": "Formulario 2",
+      "email_list": "correo1@test.co"
     }
   }
 ]

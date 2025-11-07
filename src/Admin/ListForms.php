@@ -38,11 +38,11 @@ function simple_forms_listing_cb()
     foreach ($forms as $form) {
       $section .= '<tr>
             <td>' . $form['id'] . '</td>
-            <td>' . $form['settings']['title'] . '</td>
+            <td>' . $form['settings']['titulo'] . '</td>
             <td class="shortcode_form">[vs_form id="' . $form['id'] . '" thank_you_page="/" ]</td>
             <td>' . count($form['fields']) . '</td>
             <td>
-              <a href="admin.php?page=simple-forms&form_id=' . $form['id'] . '&form_title=' . $form['settings']['title'] . '">Editar</a>
+              <a href="admin.php?page=simple-forms&form_id=' . $form['id'] . '&form_title=' . $form['settings']['titulo'] . '">Editar</a>
               <a href="#">Desactivar</a>
             </td>
           </tr>';

@@ -50,7 +50,7 @@ function simple_forms_render_page()
         }
       }
       ?>
-      <form method="POST" action="" id="form-generate-json" data-json-vsform="<?php echo htmlspecialchars($jsonInit, ENT_QUOTES, 'UTF-8') ?>">
+      <form method="POST" action="" id="form-generate-json" data-json-form="<?php echo htmlspecialchars($jsonInit, ENT_QUOTES, 'UTF-8') ?>">
         <div>
           <input type="text" placeholder="Nombre del formulario" class="title-form info-form" id="title-form" value="<?php echo $_GET['form_title'] ?>" <?php echo $_GET['form_title'] ? 'disabled' : '' ?>>
         </div>
@@ -59,7 +59,7 @@ function simple_forms_render_page()
 
             if ($form['id'] === $form_id_to_edit) {
 
-              $form_html = "";
+              $field_schema = "";
               $data_field = [];
               // Recorrer los campos del formulario
               foreach ($form['fields'] as $field_id => $field_data) {
@@ -75,21 +75,23 @@ function simple_forms_render_page()
                 }
                 $data_field[$field_id] = json_decode($field_json);
 
-                $icon_up = PLUGIN_URL . 'assets/img/arrow-up.svg';
-                $icon_down = PLUGIN_URL . 'assets/img/arrow-down.svg';
+                $icon_up = PLUGIN_URL . 'assets/src/images/up.svg';
+                $icon_down = PLUGIN_URL . 'assets/src/images/down.svg';
+                $icon_directions = PLUGIN_URL . 'assets/src/images/directions.svg';
 
-                $form_html .= '
+                $field_schema .= '
                       <div class="field-form" draggable="true" data-field-id="' . $field_id . '" data-info-field="' . htmlspecialchars(json_encode($data_field)) . '">
                         <div class="vs-field">
                           <div class="field-label">' . $field_data['label'] . '</div>
                           <span class="field-type vs-field">' . $field_data['type'] . '</span>
                         </div>
                         <button class="btn-primary btn-edit-field" type="button">Editar</button>
-                        <button class="btn-danger btn-delete-field" type="button">Borrar</button>
+                        <button class="btn-caution btn-delete-field" type="button">Borrar</button>
+                        <img src="'. $icon_directions .'" />
                       </div>';
               }
 
-              echo $form_html;
+              echo $field_schema;
 
               break;
             }
@@ -115,7 +117,7 @@ function simple_forms_render_page()
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary save-json-form">Guardar Formulario</button>
+        <button type="submit" class="save-json-form btn-primary">Guardar Formulario</button>
       </form>
 
       <sidebar class="sidebar-settings-fields">
@@ -181,7 +183,7 @@ function simple_forms_render_page()
                   <input type="text" placeholder="Opción por defecto" id="default-option" class="default-select" value="--Selecciona una opción">
                 </p>
               </div>
-              <button class="btn btn-primary btn-add-option">Agregar opción</button>
+              <button class="btn-black btn-add-option">Agregar opción</button>
               <div class="options-select wrapper-items-fields"></div>
             </div>
             <div class="extra extra-checkbox">
@@ -190,7 +192,7 @@ function simple_forms_render_page()
               </p>
             </div>
             <div class="extra extra-radio extra-checkbox">
-              <button class="btn btn-primary btn-add-checkradio">Agregar elemento</button>
+              <button class="btn-black btn-add-checkradio">Agregar elemento</button>
               <div class="options-checkbox-radio options-checkbox options-radio wrapper-items-fields"></div>
             </div>
             <div class="extra extra-file">
@@ -237,7 +239,7 @@ function simple_forms_render_page()
             </div>
           </div>
 
-          <button class="btn-add-field btn btn-warning">Crear campo</button>
+          <button class="btn-add-field btn-secondary">Crear campo</button>
           <div class="actions-edit-field">
             <button class="btn-edit btn btn-warning">Editar campo</button>
             <button class="btn-cancel  btn btn-secondary">Cancelar</button>

@@ -1,0 +1,54 @@
+@use './variables' as *;
+
+// Botones
+button{
+  border-radius: 8px;
+  padding: 14px 20px;
+  line-height: 1;
+  color: $black;
+  border: none;
+  outline: none;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .3s ease box-shadow;
+  &:hover{
+    box-shadow: 0px 4px 7px 0 $shadow;
+  }
+
+  &.btn-primary{
+    background-color: $blue50;
+    color: $blue;
+  }
+  
+  &.btn-secondary{
+    background-color: $secondary;
+    color: $black;
+  }
+  
+  &.btn-black{
+    background-color: $black;
+    color: $white;
+  }
+  &.btn-caution{
+    background-color: $red50;
+    color: $red;
+  }
+  &.btn-edit-field{
+    background-color: transparent;
+    outline: 2px solid $blue;
+    color: $blue;
+    &:hover{
+      background-color: $blue;
+      color: $white;
+    }
+  }
+  &.btn-delete-field{
+    background-color: transparent;
+    outline: 2px solid $red;
+    color: $red;
+    &:hover{
+      background-color: $red;
+      color: $white;
+    }
+  }
+}

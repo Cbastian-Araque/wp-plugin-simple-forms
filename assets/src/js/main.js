@@ -1,7 +1,7 @@
 const $ = jQuery;
 const d = document;
 
-class VsField {
+class SimpleField {
   static numberField = 1; // Si el nombre del campo es field_ usa esta variable
   static numberTextarea = 1; // Si el nombre del campo es textarea_ se usa esta variable
 
@@ -45,8 +45,8 @@ class VsField {
     });
 
     // Asigna los valores máximos a las variables estáticas, incrementando en 1 para el siguiente campo.
-    VsField.numberField = maxField + 1;
-    VsField.numberTextarea = maxTextarea + 1;
+    SimpleField.numberField = maxField + 1;
+    SimpleField.numberTextarea = maxTextarea + 1;
   }
 
   static CreateJSONField(type, label, required, extras, fieldName) {
@@ -84,7 +84,7 @@ class VsField {
     btnEditField.classList.add('btn-primary', `btn-edit-field`);
     btnEditField.setAttribute('type', 'button');
     btnDeleteField.textContent = "Borrar";
-    btnDeleteField.classList.add('btn-danger', `btn-delete-field`);
+    btnDeleteField.classList.add('btn-caution', `btn-delete-field`);
     btnDeleteField.setAttribute('type', 'button');
 
     let fieldName; // Se usará para guardar el nombre del cmapo (field_ o textarea_)
@@ -92,12 +92,12 @@ class VsField {
 
     if(!this.editing){
       if (this.type === 'textarea' || this.type === 'file') {
-        addNumber = VsField.numberTextarea;
-        VsField.numberTextarea++;
+        addNumber = SimpleField.numberTextarea;
+        SimpleField.numberTextarea++;
         fieldName = `textarea_${addNumber}`;
       } else {
-        addNumber = VsField.numberField;
-        VsField.numberField++;
+        addNumber = SimpleField.numberField;
+        SimpleField.numberField++;
         fieldName = `field_${addNumber}`;
       }
     }
@@ -106,13 +106,13 @@ class VsField {
     if(this.editing){
       $(detailsField).html(`<div class="field-label">${this.label}</div><span class="field-type">${this.type}</span>`);
       fieldName = $('.is-editing').data('fieldId');
-      fieldJson = VsField.CreateJSONField(this.type,this.label,this.required,this.extras,fieldName);
+      fieldJson = SimpleField.CreateJSONField(this.type,this.label,this.required,this.extras,fieldName);
 
       $('.is-editing').find('.field-label').html(this.label);
       $('.is-editing').find('.field-type').text(this.type);
       $('.is-editing').attr('data-info-field', fieldJson);
     } else {
-      fieldJson = VsField.CreateJSONField(this.type,this.label,this.required,this.extras,fieldName);
+      fieldJson = SimpleField.CreateJSONField(this.type,this.label,this.required,this.extras,fieldName);
 
       $(tagFieldsetWrapper).attr('data-info-field', fieldJson); // JSON como atributo al contneedor del campo
       $(tagFieldsetWrapper).attr('data-field-id', fieldName); // Identificador para el campo
@@ -170,7 +170,7 @@ jQuery(function ($) {
         <label>Valor</label>
         <input type="text" class="value-option" value="${value || 'Opción 1'}">
       </div>
-      <button class="btn btn-danger">-</button>
+      <button class="btn btn-caution">-</button>
     </div>
     `;
   }
@@ -312,7 +312,7 @@ jQuery(function ($) {
 
     if(labelInput !== '' && listMimetypes !== ''){
       $($settingsField).removeClass('visible-settings')
-      const newField = new VsField(typeField, labelInput, requiredField, [objExtras], isEditing);
+      const newField = new SimpleField(typeField, labelInput, requiredField, [objExtras], isEditing);
       const fieldElement = newField.createField();
   
       // Añadir el nuevo campo al contenedor
@@ -350,7 +350,7 @@ jQuery(function ($) {
   }
 
   function removeElement(){ // Elimina un campo o elemento del campo (opción)
-    $('body').on('click', '.btn-danger', function(e){
+    $('body').on('click', '.btn-caution', function(e){
       $(this).parent().remove();
     });
   }
@@ -574,12 +574,12 @@ jQuery(function ($) {
     
     observer.observe(targetNode, config);
 
-    // Detectar cambios en los campos ya creados con los botones de editar y borrar
+    // Detectar cambios en los campos ya creados
     $('.fields-added').on('click', '.btn-edit-field, .btn-delete-field', function () {
       formModified = true;
     });
 
-    // Detectar cambios en el título del formulario (input #title-form)
+    // Detectar cambios en el título del formulario
     $('#title-form').on('change input', detectarCambios);
 
     // Manejar el evento beforeunload - cuando se quiere recargar o redireccionar a otra página
@@ -607,7 +607,6 @@ jQuery(function ($) {
     e.preventDefault();
     const formTitle = $formPreview.find('.title-form').val(); // Titulo/ID de formulario
     const formEmails = $formPreview.find('.emails-form').val(); // Lista de emails a notificar
-    const formPrefooter = $formPreview.find('.prefooter-form').is(':checked') ? true : false; // Mostrar o no prefooter
     const formBtnLabel = $formPreview.find('.label-button').val(); // Etiqeuta del botón
     const formFields = $formPreview.find('.fields-added .field-form').toArray(); // Campos del formulario (field_x, textarea_x) 
     const formId = regexMinAcentos(formTitle); // Convierte el título del formulario a formato id
@@ -636,10 +635,8 @@ jQuery(function ($) {
         label: formBtnLabel
       },
       settings: {
-        no_pre_footer: formPrefooter,
         titulo: formTitle,
         email_list: formEmails,
-        db_viewer: []
       }
     };
 
@@ -650,14 +647,14 @@ jQuery(function ($) {
       formsArray.push(formData); // Agrega el formulario al array
 
       // Se genera un json con la información del formulario
-      $formPreview.attr('data-json-vsform', JSON.stringify(formData, null, 0));
+      $formPreview.attr('data-json-form', JSON.stringify(formData, null, 0));
     }
 
   });
 
   // Inicializar las funciones
   $selectField.val('text').trigger('change'); // Esto se hace para que se muestren los campos extra para el campo "texto"
-  VsField.inicializarNumerosMaximos();
+  SimpleField.inicializarNumerosMaximos();
   dragFields();
   removeElement();
   addOptionField();

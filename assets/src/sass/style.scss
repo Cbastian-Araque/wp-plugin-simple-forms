@@ -1,6 +1,7 @@
 @use './variables' as *;
 @use './form-preview-schema' as *;
 @use './form-add_field' as *;
+@use './components' as *;
 
 #wpcontent{
   padding: 0;
