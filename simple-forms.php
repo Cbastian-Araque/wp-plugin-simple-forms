@@ -25,6 +25,7 @@ require_once('enqueue.php');
 // Incluir archivos
 require_once plugin_dir_path(__FILE__) . 'src/Database/Options.php';
 require_once plugin_dir_path(__FILE__) . 'src/Database/Migration.php';
+require_once plugin_dir_path(__FILE__) . 'src/Database/FormRepository.php';
 require_once plugin_dir_path(__FILE__) . 'src/Admin/Admin.php';
 
 // Includes

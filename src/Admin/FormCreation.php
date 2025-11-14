@@ -26,6 +26,12 @@ function simple_forms_render_page()
     $form_id_to_edit = $_GET['form_id'];
     $forms = json_decode($forms_data, true);
 
+    $repo = new SimpleForms_FormsRepository();
+
+foreach ($forms as $form) {
+  $repo->save_form($form);
+}
+
     if ($forms_data === false) {
       die('Error al leer el archivo JSON.');
     }
@@ -81,13 +87,12 @@ function simple_forms_render_page()
 
                 $field_schema .= '
                       <div class="field-form" draggable="true" data-field-id="' . $field_id . '" data-info-field="' . htmlspecialchars(json_encode($data_field)) . '">
-                        <div class="vs-field">
+                        <div class="form-field">
                           <div class="field-label">' . $field_data['label'] . '</div>
-                          <span class="field-type vs-field">' . $field_data['type'] . '</span>
+                          <span class="field-type">' . $field_data['type'] . '</span>
                         </div>
                         <button class="btn-primary btn-edit-field" type="button">Editar</button>
                         <button class="btn-caution btn-delete-field" type="button">Borrar</button>
-                        <img src="'. $icon_directions .'" />
                       </div>';
               }
 
@@ -100,22 +105,18 @@ function simple_forms_render_page()
         </div>
 
         <div class="fields-hidden">
-
-          <div class="vs-settings vs-prefooter">
-            <span>¿Mostrar prefooter?</span>
-            <input type="checkbox" <?php echo $form['settings']['no_pre_footer'] ? 'checked' : '' ?> class="prefooter-form info-form" name="prefooter-form" id="prefooter-form">
-          </div>
-
-          <div class="vs-settings vs-emails">
+          <div class="form-settings form-emails">
             <span>Correos de notificación</span>
             <input type="text" placeholder="correos separados por coma (,)" class="emails-form info-form" id="emails-form" value="<?php echo isset($_GET['form_id']) ? $form['settings']['email_list'] : ''  ?>">
           </div>
 
-          <div class="vs-settings vs-btn-label">
+          <div class="form-settings form-btn-label">
             <span>Etiqueta del botón</span>
             <input type="text" placeholder="Enviar" class="label-button info-form" id="label-button" value="<?php echo isset($_GET['form_id']) ? $form['submit_btn']['label'] : ''  ?>">
           </div>
         </div>
+
+        <?php wp_nonce_field('simple_forms_save_action', 'simple_forms_nonce'); ?>
 
         <button type="submit" class="save-json-form btn-primary">Guardar Formulario</button>
       </form>
@@ -254,25 +255,39 @@ function simple_forms_render_page()
 
 function sf_handle_form_submission($data)
 {
-  $form_id = sanitize_text_field($data['form_id']);
-  $form_title = sanitize_text_field($data['form_title']);
-  $form_email = sanitize_text_field($data['form_email']);
-  $form_fields = json_decode(stripslashes($data['form_fields']), true);
+  // Sanitizar los campos básicos
+  $form_id     = sanitize_text_field($data['form_id']);
+  $form_title  = sanitize_text_field($data['form_title']);
+  $form_email  = sanitize_text_field($data['form_email']);
 
-  var_dump($data);
+  // Decodificar el JSON de los campos
+  $form_fields = json_decode(stripslashes($data['form_fields']), true);
 
   if (json_last_error() !== JSON_ERROR_NONE) {
     wp_die('El JSON de los campos es inválido.');
   }
 
-  // Crear la definición del formulario
-  $vs_forms_code = "<?php\n\n\$vs_forms->add_form(\n    '$form_id',\n    1,\n    " . var_export($form_fields, true) . ",\n    array(\n        'submit_type' => 'send',\n        'label' => 'Enviar'\n    ),\n    array(\n        'titulo' => '$form_title',\n        'email_list' => '$form_email'\n    )\n);";
+  // Estructurar el formulario para guardar
+  $form = [
+    'id'       => $form_id,
+    'version'  => 1,
+    'fields'   => $form_fields,
+    'settings' => [
+      'titulo'      => $form_title,
+      'email_list'  => $form_email
+    ]
+  ];
 
-  // Guardar en un archivo
-  $form_file = get_template_directory() . '/vs_forms/' . $form_id . '.php';
-  file_put_contents($form_file, $vs_forms_code);
+  // Incluir el repositorio si no está cargado
+  if (!class_exists('SimpleForms_FormsRepository')) {
+    require_once plugin_dir_path(__FILE__) . 'src/Database/FormsRepository.php';
+  }
 
-  // Redirigir al listado
-  wp_redirect(admin_url('admin.php?page=form-listing'));
+  // Guardar el formulario
+  $repo = new SimpleForms_FormsRepository();
+  $repo->save_form($form);
+
+  // Redirigir al listado después de guardar
+  wp_redirect(admin_url('admin.php?page=form-listing&status=saved'));
   exit;
 }

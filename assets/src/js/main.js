@@ -77,7 +77,7 @@ class SimpleField {
 
     $(tagFieldsetWrapper).addClass('field-form');
     $(tagFieldsetWrapper).attr('draggable', 'true');
-    $(detailsField).addClass('vs-field');
+    $(detailsField).addClass('form-field');
 
     // Botones editar/borrar/Subir/Bajar
     btnEditField.textContent = "Editar";

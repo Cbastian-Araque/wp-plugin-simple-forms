@@ -74,7 +74,10 @@
       "field_6": {
         "type": "number",
         "label": "<p>Teléfono de contácto</p>",
-        "required": true
+        "required": true,
+        "extras": {
+          "validation_rules": ["NUMBERS_ONLY"]
+        }
       },
       "field_7": {
         "type": "time",

@@ -17,10 +17,10 @@ function simple_forms_listing_cb()
   $forms = json_decode($json_data, true);
 
   $section = '
-  <section class="vs-forms-list-container wrap">
+    <section class="simple-forms-list-container wrap">
   <h1>Listado de Formularios</h1>
   <a href="' . admin_url('admin.php?page=simple-forms') . '" class="button button-primary">Crear Nuevo Formulario</a>
-  <table class="wp-list-table widefat fixed striped" id="table_vs_form_list">
+  <table class="wp-list-table widefat fixed striped" id="table_simple_form_list">
     <thead>
       <tr>
         <th class="" colspan="">ID del formulario</th>
@@ -39,7 +39,7 @@ function simple_forms_listing_cb()
       $section .= '<tr>
             <td>' . $form['id'] . '</td>
             <td>' . $form['settings']['titulo'] . '</td>
-            <td class="shortcode_form">[vs_form id="' . $form['id'] . '" thank_you_page="/" ]</td>
+            <td class="shortcode_form">[simple_form id="' . $form['id'] . '" thank_you_page="/" ]</td>
             <td>' . count($form['fields']) . '</td>
             <td>
               <a href="admin.php?page=simple-forms&form_id=' . $form['id'] . '&form_title=' . $form['settings']['titulo'] . '">Editar</a>
