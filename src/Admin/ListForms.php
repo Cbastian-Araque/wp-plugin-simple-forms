@@ -1,21 +1,21 @@
 <?php
 function simple_forms_listing_cb()
 {
-  global $wpdb;
+  $get_forms = new SimpleForms_FormsRepository;
+  $results = $get_forms->get_all_forms();
+
+  if (empty($results)) {
+    echo "<h3>No hay formularios para mostrar.</h3>";
+    return;
+  }
+
+  // Convertir cada form_fields (que es JSON en la DB)
+  foreach ($results as &$form) {
+    $form['form_fields'] = json_decode($form['form_fields'], true);
+  }
+
+  $forms = $results;
   
-  $json_file = PLUGIN_PATH . 'src/Database/data.json';
-  $json_data = file_get_contents($json_file);
-
-  if ($json_data === false) {
-    die('<h1>Error al leer el archivo JSON.</h1>');
-  }
-
-  if (json_last_error() !== JSON_ERROR_NONE) {
-    die('Error al decodificar JSON: ' . json_last_error_msg());
-  }
-
-  $forms = json_decode($json_data, true);
-
   $section = '
     <section class="simple-forms-list-container wrap">
   <h1>Listado de Formularios</h1>
@@ -33,23 +33,23 @@ function simple_forms_listing_cb()
 
     <tbody>';
 
-  // Aquí cargarás los formularios almacenados
-  if (file_exists($json_file)) {
-    foreach ($forms as $form) {
-      $section .= '<tr>
+      // Aquí cargarás los formularios almacenados
+      if ( $forms) {
+        foreach ($forms as $form) {
+          $section .= '<tr>
             <td>' . $form['id'] . '</td>
-            <td>' . $form['settings']['titulo'] . '</td>
-            <td class="shortcode_form">[simple_form id="' . $form['id'] . '" thank_you_page="/" ]</td>
-            <td>' . count($form['fields']) . '</td>
+            <td>' . $form['form_name'] . '</td>
+            <td class="shortcode_form">'. $form['shortcode'] .'</td>
+            <td class="cccc">' . $form['form_fields'] . '</td>
             <td>
-              <a href="admin.php?page=simple-forms&form_id=' . $form['id'] . '&form_title=' . $form['settings']['titulo'] . '">Editar</a>
-              <a href="#">Desactivar</a>
+                <a href="admin.php?page=simple-forms&form_id=' . $form['id'] . '&form_title=' . $form['form_name'] . '">Editar</a>
+                <a href="#">Desactivar</a>
             </td>
           </tr>';
-    }
-  }
+        }
+      }
 
-  '</tbody>
+    '</tbody>
   </table>';
   '</section>';
 

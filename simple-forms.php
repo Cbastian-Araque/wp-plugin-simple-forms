@@ -36,3 +36,4 @@ register_activation_hook(__FILE__, 'simple_forms_on_activate');
 register_deactivation_hook(__FILE__, 'simple_forms_deactivate');
 register_uninstall_hook(__FILE__, 'simple_forms_on_uninstall');
 
+new SimpleForms_FormHandler();

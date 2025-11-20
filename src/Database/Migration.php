@@ -83,6 +83,7 @@ class SimpleForms_Migration
     return "CREATE TABLE {$table_name} (
       id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
       form_name VARCHAR(255) NOT NULL,
+      form_title VARCHAR(255) NOT NULL,
       version INT DEFAULT 1,
       form_fields LONGTEXT NOT NULL, -- JSON del formulario
       shortcode VARCHAR(255) DEFAULT NULL,

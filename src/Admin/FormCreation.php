@@ -21,24 +21,32 @@ function simple_forms_render_page()
   }
 
   if (isset($_GET['form_id'])) :
-    $forms_json = PLUGIN_PATH . 'src/Database/data.json';
-    $forms_data = file_get_contents($forms_json);
-    $form_id_to_edit = $_GET['form_id'];
-    $forms = json_decode($forms_data, true);
+    global $wpdb;
+
+    $table = $wpdb->prefix . TABLE_PREFIX . TABLE_FORMS_SCHEMAS;
+    $form_id = $_GET['form_id'];
+
+    // Obtener los formularios desde la base de datos
+    $results = $wpdb->get_results("SELECT * FROM {$table} WHERE id = {$form_id}", ARRAY_A);
+
+    if (empty($results)) {
+      echo "<h3>No hay formularios para mostrar.</h3>";
+      return;
+    }
+
+    // Convertir cada form_fields (que es JSON en la DB)
+    foreach ($results as &$form) {
+      $form['form_fields'] = json_decode($form['form_fields'], true);
+    }
+
+    $forms = $results;
 
     $repo = new SimpleForms_FormsRepository();
 
-foreach ($forms as $form) {
-  $repo->save_form($form);
-}
-
-    if ($forms_data === false) {
-      die('Error al leer el archivo JSON.');
+    foreach ($forms as $form) {
+      $repo->save_form($form);
     }
 
-    if (json_last_error() !== JSON_ERROR_NONE) {
-      die('Error al decodificar JSON: ' . json_last_error_msg());
-    }
   endif;
 ?>
 
@@ -51,7 +59,7 @@ foreach ($forms as $form) {
       <?php
       $jsonInit = '';
       foreach ($forms as $form) {
-        if ($form['id'] === $form_id_to_edit) {
+        if ($form['id'] === $form_id) {
           $jsonInit .= json_encode($form);
         }
       }
@@ -62,13 +70,13 @@ foreach ($forms as $form) {
         </div>
         <div class="fields-added">
           <?php foreach ($forms as $form) {
-
-            if ($form['id'] === $form_id_to_edit) {
+            if ($form['id'] === $form_id) {
 
               $field_schema = "";
               $data_field = [];
+
               // Recorrer los campos del formulario
-              foreach ($form['fields'] as $field_id => $field_data) {
+              foreach ($form['form_fields'] as $field_id => $field_data) {
                 $data_field = [];  // Alamcenar el data de cada campo
 
                 // Convierte el array a JSON
@@ -79,6 +87,7 @@ foreach ($forms as $form) {
                   error_log("Error al codificar JSON para el campo " . $field_id . ": " . json_last_error_msg());
                   $field_json = '{"error": "Error al procesar datos"}'; // Valor por defecto en caso de error
                 }
+
                 $data_field[$field_id] = json_decode($field_json);
 
                 $icon_up = PLUGIN_URL . 'assets/src/images/up.svg';

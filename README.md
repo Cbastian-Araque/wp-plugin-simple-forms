@@ -30,7 +30,7 @@ Diseñado con **Programación Orientada a Objetos (POO)** y **JavaScript moderno
 * No se eliminan los formularios publicados, para evitar pérdida de contenido accidental.
 
 ## Minificar JS
-> npx run vite build
+> npx vite build
 
 ## Minificar CSS
 Se debe ejecutar manualmente, se debe agregar la ruta del archivo de entrada (con todos los archivos importados) y la ruta del archivo final (ya minificado), Ejemplo _sass assets/src/sass/style.scss assets/src/css/main.min.css --style=compressed_

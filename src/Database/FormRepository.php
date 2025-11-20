@@ -1,8 +1,9 @@
-<?php 
+<?php
+
 /**
  * CRUD para formularios
  */
-if (!defined('ABSPATH')) exit; // Seguridad
+if (!defined('ABSPATH')) exit;
 
 class SimpleForms_FormsRepository
 {
@@ -17,7 +18,7 @@ class SimpleForms_FormsRepository
   }
 
   /**
-   * Guarda o actualiza un formulario en la base de datos
+   * Guarda o actualiza un formulario en la DB
    */
   public function save_form($form)
   {
@@ -25,14 +26,18 @@ class SimpleForms_FormsRepository
 
     $data = [
       'form_name'   => sanitize_text_field($form['id']),
+      'form_title' => sanitize_text_field($form['settings']['titulo']),
       'version'     => intval($form['version']),
-      'form_fields' => wp_json_encode($form['fields']),
+      'form_fields' => wp_json_encode($form['fields'], JSON_UNESCAPED_UNICODE),
       'shortcode'   => '[simple_form id="' . sanitize_text_field($form['id']) . '"]',
-      'updated_at'  => current_time('mysql')
+      'updated_at'  => current_time('mysql'),
     ];
 
     $exists = $wpdb->get_var(
-      $wpdb->prepare("SELECT id FROM {$this->table_schemas} WHERE form_name = %s", $data['form_name'])
+      $wpdb->prepare(
+        "SELECT id FROM {$this->table_schemas} WHERE form_name = %s",
+        $data['form_name']
+      )
     );
 
     if ($exists) {
@@ -40,7 +45,7 @@ class SimpleForms_FormsRepository
         $this->table_schemas,
         $data,
         ['id' => $exists],
-        ['%s', '%d', '%s', '%s', '%s'],
+        ['%s', '%s', '%d', '%s', '%s', '%s'],
         ['%d']
       );
     } else {
@@ -48,13 +53,13 @@ class SimpleForms_FormsRepository
       $wpdb->insert(
         $this->table_schemas,
         $data,
-        ['%s', '%d', '%s', '%s', '%s', '%s']
+        ['%s', '%s', '%d', '%s', '%s', '%s', '%s']
       );
     }
   }
 
   /**
-   * Obtiene todos los formularios guardados
+   * Obtiene todos los formularios
    */
   public function get_all_forms()
   {
@@ -63,27 +68,70 @@ class SimpleForms_FormsRepository
   }
 
   /**
-   * Obtiene un formulario por su nombre
+   * Obtiene un formulario por su form_name
    */
   public function get_form($form_name)
   {
     global $wpdb;
+
     $row = $wpdb->get_row(
-      $wpdb->prepare("SELECT * FROM {$this->table_schemas} WHERE form_name = %s", $form_name),
+      $wpdb->prepare(
+        "SELECT * FROM {$this->table_schemas} WHERE form_name = %s",
+        $form_name
+      ),
       ARRAY_A
     );
+
     if ($row) {
       $row['form_fields'] = json_decode($row['form_fields'], true);
     }
+
     return $row;
   }
 
   /**
-   * Elimina un formulario por su nombre
+   * Elimina un formulario + todos sus registros asociados (cascada)
    */
-  public function delete_form($form_name)
+  public function delete_form_cascade($form_name)
   {
     global $wpdb;
-    return $wpdb->delete($this->table_schemas, ['form_name' => $form_name], ['%s']);
+
+    // 1. Obtener el formulario para saber su ID
+    $form = $this->get_form($form_name);
+    if (!$form) {
+      return false; // no existe
+    }
+
+    $form_id = intval($form['id']);
+
+    // Tablas secundarias
+    $table_records      = $this->prefix . TABLE_PREFIX . TABLE_RECORDS;
+    $table_records_meta = $this->prefix . TABLE_PREFIX . TABLE_ENTRY_META;
+    $table_files        = $this->prefix . TABLE_PREFIX . TABLE_FILES;
+
+    // 2. Obtener todos los registros (entries)
+    $entries = $wpdb->get_col(
+      $wpdb->prepare("SELECT id FROM {$table_records} WHERE form_id = %d", $form_id)
+    );
+
+    if (!empty($entries)) {
+      $entries_list = implode(',', array_map('intval', $entries));
+
+      // 3. Eliminar metadata de registros
+      $wpdb->query("DELETE FROM {$table_records_meta} WHERE entry_id IN ($entries_list)");
+
+      // 4. Eliminar archivos relacionados
+      $wpdb->query("DELETE FROM {$table_files} WHERE entry_id IN ($entries_list)");
+
+      // 5. Eliminar registros
+      $wpdb->query("DELETE FROM {$table_records} WHERE id IN ($entries_list)");
+    }
+
+    // 6. Eliminar el formulario final
+    return $wpdb->delete(
+      $this->table_schemas,
+      ['form_name' => $form_name],
+      ['%s']
+    );
   }
 }
