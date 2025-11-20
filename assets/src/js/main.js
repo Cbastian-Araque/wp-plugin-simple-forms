@@ -649,20 +649,6 @@ jQuery(function ($) {
       // Se genera un json con la información del formulario
       $formPreview.attr('data-json-form', JSON.stringify(formData, null, 0));
 
-      $.post(SimpleFormsAjax.ajaxurl, {
-        action: 'simpleforms_save_form',
-        form: formData,
-        _ajax_nonce: SimpleFormsAjax.nonce
-      }, function (response) {
-
-        if (response.success) {
-          alert("Formulario guardado correctamente.");
-        } else {
-          alert("Error al guardar: " + response.data);
-        }
-
-      });
-
       $.ajax({
         url: ajaxurl,
         method: "POST",
