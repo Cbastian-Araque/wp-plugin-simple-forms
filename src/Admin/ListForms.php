@@ -5,7 +5,7 @@ function simple_forms_listing_cb()
   $results = $get_forms->get_all_forms();
 
   if (empty($results)) {
-    echo "<h3>No hay formularios para mostrar.</h3>";
+    printf("<h3>%s</h3>",__('No hay formularios para mostrar.', 'simple-forms'));
     return;
   }
 
@@ -18,16 +18,17 @@ function simple_forms_listing_cb()
 ?>
 
   <section class="simple-forms-list-container wrap">
-    <h1>Listado de Formularios</h1>
-    <a href="<?php echo admin_url('admin.php?page=simple-forms') ?>" class="button button-primary">Crear Nuevo Formulario</a>
+    <?php printf('<h1>%s</h1>', __('Listado de Formularios', 'simple-forms')) ?>
+
+    <a href="<?php echo admin_url('admin.php?page=simple-forms') ?>" class="button button-primary"><?php echo __('Crear Nuevo Formulario','simple-forms') ?></a>
     <table class="wp-list-table widefat fixed striped" id="table_simple_form_list">
       <thead>
         <tr>
-          <th class="" colspan="">ID del formulario</th>
-          <th class="" colspan="">Título</th>
-          <th class="" colspan="">Shortcode</th>
-          <th class="" colspan="">Campos</th>
-          <th class="" colspan="">Acciones</th>
+          <th class="" colspan=""><?php echo __('ID del formulario','simple-forms') ?></th>
+          <th class="" colspan=""><?php echo __('Título','simple-forms') ?></th>
+          <th class="" colspan=""><?php echo __('Shortcode','simple-forms') ?></th>
+          <th class="" colspan=""><?php echo __('Campos','simple-forms') ?></th>
+          <th class="" colspan=""><?php echo __('Acciones','simple-forms') ?></th>
         </tr>
       </thead>
 
@@ -40,8 +41,8 @@ function simple_forms_listing_cb()
               <td class="shortcode_form"><?php echo $form['shortcode'] ?></td>
               <td class="cccc"><?php echo count($form['form_fields']) ?></td>
               <td>
-                <a href="admin.php?page=simple-forms&form_id=<?php echo $form['id'] . '&form_title=' . $form['form_name'] ?>">Editar</a>
-                <a href="#">Desactivar</a>
+                <a href="admin.php?page=simple-forms&form_id=<?php echo $form['id'] . '&form_title=' . $form['form_name'] ?>"><?php echo __('Editar','simple-forms') ?></a>
+                <a href="#"><?php echo __('Desactivar','simple-forms') ?></a>
               </td>
             </tr>
           <?php endforeach; ?>
