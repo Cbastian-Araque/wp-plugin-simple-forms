@@ -17,6 +17,8 @@ class FormRenderer
 
         echo '<form class="simple-form" method="post" enctype="multipart/form-data">';
 
+        echo "<div class='wrapper-fields'>";
+
         foreach ($fields as $field_id => $field) {
 
             // Valores seguros y con fallback
@@ -27,7 +29,7 @@ class FormRenderer
             $value       = isset($field['value']) ? esc_attr($field['value']) : '';
             $class       = isset($field['class']) ? esc_attr($field['class']) : '';
 
-            echo "<div class='sf-field'>";
+            echo "<fieldset class='sf-field'>";
 
             if ($label) {
                 echo "<label for='$field_id'>$label</label>";
@@ -158,10 +160,11 @@ class FormRenderer
                     echo "<p>Tipo de campo no soportado: $type</p>";
             }
 
-            echo "</div>"; // fin sf-field
+            echo "</fieldset>"; // fin sf-field
         }
 
         echo '<button type="submit">Enviar</button>';
+        echo '</div>';
         echo '</form>';
 
         return ob_get_clean();

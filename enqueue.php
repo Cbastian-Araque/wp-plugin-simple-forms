@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-// Registrar y cargar scripts/estilos
+// Registrar y cargar scripts/estilos para el admin
 function simpleforms_enqueue_scripts()
 {
 
@@ -34,3 +34,23 @@ function simpleforms_enqueue_scripts()
 
 // Hook: cargar scripts del front-end
 add_action('admin_enqueue_scripts', 'simpleforms_enqueue_scripts');
+
+
+/**
+ * CSS para el frontend (shortcodes)
+ */
+function simple_forms_frontend_assets()
+{
+  // Solo cargar si aparece el shortcode simple_form
+  global $post;
+
+  if (isset($post->post_content) && has_shortcode($post->post_content, 'simple_form')) {
+    wp_enqueue_style(
+      'simple-forms-frontend',
+      plugin_dir_url(__FILE__) . 'assets/src/frontend/simple-forms.css',
+      [],
+      PLUGIN_VERSION
+    );
+  }
+}
+add_action('wp_enqueue_scripts', 'simple_forms_frontend_assets');
