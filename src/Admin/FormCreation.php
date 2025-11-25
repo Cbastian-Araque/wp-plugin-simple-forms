@@ -1,6 +1,9 @@
 <?php // Callback que renderiza el contenido de la página
 function simple_forms_render_page()
 {
+  $forms = [];
+  $form_id = null;
+
   // Tipos de campos
   $arr_type_fields = [
     "text" => "Texto",
@@ -41,12 +44,6 @@ function simple_forms_render_page()
 
     $forms = $results;
 
-    $repo = new SimpleForms_FormsRepository();
-
-    foreach ($forms as $form) {
-      $repo->save_form($form);
-    }
-
   endif;
 ?>
 
@@ -66,7 +63,7 @@ function simple_forms_render_page()
       ?>
       <form method="POST" action="" id="form-generate-json" data-json-form="<?php echo htmlspecialchars($jsonInit, ENT_QUOTES, 'UTF-8') ?>">
         <div>
-          <input type="text" placeholder="Nombre del formulario" class="title-form info-form" id="title-form" value="<?php echo $_GET['form_title'] ?>" <?php echo $_GET['form_title'] ? 'disabled' : '' ?>>
+          <input type="text" placeholder="Nombre del formulario" class="title-form info-form" id="title-form" value="<?php echo isset($_GET['form_title']) ? sanitize_text_field($_GET['form_title']) : null ?>" <?php echo isset($_GET['form_title']) ? 'disabled' : '' ?>>
         </div>
         <div class="fields-added">
           <?php foreach ($forms as $form) {
@@ -76,33 +73,35 @@ function simple_forms_render_page()
               $data_field = [];
 
               // Recorrer los campos del formulario
-              foreach ($form['form_fields'] as $field_id => $field_data) {
-                $data_field = [];  // Alamcenar el data de cada campo
-
-                // Convierte el array a JSON
-                $field_json = json_encode($field_data);
-
-                // Manejo de errores en la codificación JSON (IMPORTANTE)
-                if ($field_json === false) {
-                  error_log("Error al codificar JSON para el campo " . $field_id . ": " . json_last_error_msg());
-                  $field_json = '{"error": "Error al procesar datos"}'; // Valor por defecto en caso de error
+              if($form['form_fields']) {
+                foreach ($form['form_fields'] as $field_id => $field_data) {
+                  $data_field = [];  // Alamcenar el data de cada campo
+  
+                  // Convierte el array a JSON
+                  $field_json = json_encode($field_data);
+  
+                  // Manejo de errores en la codificación JSON (IMPORTANTE)
+                  if ($field_json === false) {
+                    error_log("Error al codificar JSON para el campo " . $field_id . ": " . json_last_error_msg());
+                    $field_json = '{"error": "Error al procesar datos"}'; // Valor por defecto en caso de error
+                  }
+  
+                  $data_field[$field_id] = json_decode($field_json);
+  
+                  $icon_up = PLUGIN_URL . 'assets/src/images/up.svg';
+                  $icon_down = PLUGIN_URL . 'assets/src/images/down.svg';
+                  $icon_directions = PLUGIN_URL . 'assets/src/images/directions.svg';
+  
+                  $field_schema .= '
+                        <div class="field-form" draggable="true" data-field-id="' . $field_id . '" data-info-field="' . htmlspecialchars(json_encode($data_field)) . '">
+                          <div class="form-field">
+                            <div class="field-label">' . $field_data['label'] . '</div>
+                            <span class="field-type">' . $field_data['type'] . '</span>
+                          </div>
+                          <button class="btn-primary btn-edit-field" type="button">Editar</button>
+                          <button class="btn-caution btn-delete-field" type="button">Borrar</button>
+                        </div>';
                 }
-
-                $data_field[$field_id] = json_decode($field_json);
-
-                $icon_up = PLUGIN_URL . 'assets/src/images/up.svg';
-                $icon_down = PLUGIN_URL . 'assets/src/images/down.svg';
-                $icon_directions = PLUGIN_URL . 'assets/src/images/directions.svg';
-
-                $field_schema .= '
-                      <div class="field-form" draggable="true" data-field-id="' . $field_id . '" data-info-field="' . htmlspecialchars(json_encode($data_field)) . '">
-                        <div class="form-field">
-                          <div class="field-label">' . $field_data['label'] . '</div>
-                          <span class="field-type">' . $field_data['type'] . '</span>
-                        </div>
-                        <button class="btn-primary btn-edit-field" type="button">Editar</button>
-                        <button class="btn-caution btn-delete-field" type="button">Borrar</button>
-                      </div>';
               }
 
               echo $field_schema;
@@ -116,12 +115,12 @@ function simple_forms_render_page()
         <div class="fields-hidden">
           <div class="form-settings form-emails">
             <span>Correos de notificación</span>
-            <input type="text" placeholder="correos separados por coma (,)" class="emails-form info-form" id="emails-form" value="<?php echo isset($_GET['form_id']) ? $form['settings']['email_list'] : ''  ?>">
+            <input type="text" placeholder="correos separados por coma (,)" class="emails-form info-form" id="emails-form" value="<?php echo (isset($_GET['form_id']) && isset($form['settings']['email_list'])) ? $form['settings']['email_list'] : ''  ?>">
           </div>
 
           <div class="form-settings form-btn-label">
             <span>Etiqueta del botón</span>
-            <input type="text" placeholder="Enviar" class="label-button info-form" id="label-button" value="<?php echo isset($_GET['form_id']) ? $form['submit_btn']['label'] : ''  ?>">
+            <input type="text" placeholder="Enviar" class="label-button info-form" id="label-button" value="<?php echo (isset($_GET['form_id']) && isset($form['submit_btn']['label'])) ? $form['submit_btn']['label'] : ''  ?>">
           </div>
         </div>
 

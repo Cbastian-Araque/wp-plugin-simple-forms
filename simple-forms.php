@@ -27,6 +27,8 @@ require_once plugin_dir_path(__FILE__) . 'src/Database/Options.php';
 require_once plugin_dir_path(__FILE__) . 'src/Database/Migration.php';
 require_once plugin_dir_path(__FILE__) . 'src/Database/FormRepository.php';
 require_once plugin_dir_path(__FILE__) . 'src/Admin/Admin.php';
+require_once plugin_dir_path(__FILE__) . 'src/Frontend/FormRenderer.php';
+require_once plugin_dir_path(__FILE__) . 'src/Frontend/Shortcodes.php';
 
 // Includes
 require_once plugin_dir_path(__FILE__) . 'includes/includes.php';
@@ -37,3 +39,8 @@ register_deactivation_hook(__FILE__, 'simple_forms_deactivate');
 register_uninstall_hook(__FILE__, 'simple_forms_on_uninstall');
 
 new SimpleForms_FormHandler();
+
+// Inicializar shortcodes
+add_action('init', function() {
+  new \SimpleForms\Frontend\Shortcodes();
+});

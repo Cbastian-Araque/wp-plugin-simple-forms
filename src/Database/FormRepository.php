@@ -134,4 +134,25 @@ class SimpleForms_FormsRepository
       ['%s']
     );
   }
+
+  /**
+   * Obtener el sortcode del formulario
+   */
+  public function get_form_by_shortcode($shortcode)
+  {
+    global $wpdb;
+
+    var_dump("SHORTCODE RECIBIDO:", $shortcode);
+
+    $row = $wpdb->get_row(
+      $wpdb->prepare("SELECT * FROM {$this->table_schemas} WHERE form_name = %s", $shortcode),
+      ARRAY_A
+    );
+
+    if ($row) {
+      $row['form_fields'] = json_decode($row['form_fields'], true);
+    }
+
+    return $row;
+  }
 }

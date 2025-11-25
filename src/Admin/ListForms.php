@@ -41,7 +41,7 @@ function simple_forms_listing_cb()
               <td class="shortcode_form"><?php echo $form['shortcode'] ?></td>
               <td class="cccc"><?php echo count($form['form_fields']) ?></td>
               <td>
-                <a href="admin.php?page=simple-forms&form_id=<?php echo $form['id'] . '&form_title=' . $form['form_name'] ?>"><?php echo __('Editar','simple-forms') ?></a>
+                <a href="admin.php?page=simple-forms&form_id=<?php echo $form['id'] . '&form_title=' . $form['form_title'] ?>"><?php echo __('Editar','simple-forms') ?></a>
                 <a href="#"><?php echo __('Desactivar','simple-forms') ?></a>
               </td>
             </tr>
