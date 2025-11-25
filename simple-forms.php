@@ -28,6 +28,7 @@ require_once plugin_dir_path(__FILE__) . 'src/Database/Migration.php';
 require_once plugin_dir_path(__FILE__) . 'src/Database/FormRepository.php';
 require_once plugin_dir_path(__FILE__) . 'src/Admin/Admin.php';
 require_once plugin_dir_path(__FILE__) . 'src/Frontend/FormRenderer.php';
+require_once plugin_dir_path(__FILE__) . 'src/Frontend/FormSubmit.php';
 require_once plugin_dir_path(__FILE__) . 'src/Frontend/Shortcodes.php';
 
 // Includes
@@ -44,3 +45,6 @@ new SimpleForms_FormHandler();
 add_action('init', function() {
   new \SimpleForms\Frontend\Shortcodes();
 });
+
+new SimpleForms_FormSubmit();
+

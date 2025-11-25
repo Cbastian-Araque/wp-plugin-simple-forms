@@ -15,7 +15,7 @@ class FormRenderer
 
         ob_start();
 
-        echo '<form class="simple-form" method="post" enctype="multipart/form-data">';
+        echo '<form class="simple-form" action="'. admin_url('admin-post.php') .'" method="post" enctype="multipart/form-data">';
 
         echo "<div class='wrapper-fields'>";
 
@@ -165,6 +165,9 @@ class FormRenderer
 
         echo '<button type="submit">Enviar</button>';
         echo '</div>';
+        echo '<input type="hidden" name="simple_form_id" value="'. $form['form_name'] .'">';
+        echo '<input type="hidden" name="simple_form_submit" value="1">';
+        echo '<input type="hidden" name="action" value="simple_forms_submit">';
         echo '</form>';
 
         return ob_get_clean();

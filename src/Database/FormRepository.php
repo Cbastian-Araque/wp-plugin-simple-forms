@@ -142,8 +142,6 @@ class SimpleForms_FormsRepository
   {
     global $wpdb;
 
-    var_dump("SHORTCODE RECIBIDO:", $shortcode);
-
     $row = $wpdb->get_row(
       $wpdb->prepare("SELECT * FROM {$this->table_schemas} WHERE form_name = %s", $shortcode),
       ARRAY_A
