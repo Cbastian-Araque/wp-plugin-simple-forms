@@ -1,7 +1,7 @@
 @use './variables' as *;
 
 // Botones
-button{
+button, .button{
   border-radius: 8px;
   padding: 14px 20px;
   line-height: 1;
@@ -31,7 +31,7 @@ button{
   }
   &.btn-caution{
     background-color: $red50;
-    color: $red;
+    color: $white;
   }
   &.btn-edit-field{
     background-color: transparent;

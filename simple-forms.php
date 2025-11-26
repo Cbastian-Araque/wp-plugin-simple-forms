@@ -6,7 +6,7 @@
  * Author URI: https://cbastian-araque.github.io/My-Portfolio/
  * Plugin URI: https://github.com/Cbastian-Araque/wp-plugin-simple-forms
  * Description: Create your form since a UI, copy the shortcode generated and paste on your page.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Requires at least: 6.5
  * Requires PHP: 8
  * License: GPLv3

@@ -64,9 +64,9 @@ class SimpleForms_FormsService
   /**
    * Elimina un formulario con cascada
    */
-  public function delete($form_name)
+  public function delete($form_id)
   {
-    return $this->repository->delete_form_cascade($form_name);
+    return $this->repository->delete_form_cascade_by_id($form_id);
   }
 
   /**

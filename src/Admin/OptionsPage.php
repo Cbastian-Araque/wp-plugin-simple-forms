@@ -28,7 +28,7 @@ function simple_forms_subp_reports() {
         'Ver registros',              // Texto del menú
         'manage_options',        // Capacidad necesaria
         'forms-reports', // Slug único para la subpágina
-        'simpleforms_reports_cb_view' // Función callback que renderiza la página
+        'simple_forms_reports_details_cb' // Función callback que renderiza la página
     );
     add_submenu_page(
         'simple-forms',        // Slug de la página padre
@@ -38,23 +38,4 @@ function simple_forms_subp_reports() {
         'form-listing', // Slug único para la subpágina
         'simple_forms_listing_cb' // Función callback que renderiza la página
     );
-}
-
-// Callback para mostrar el contenido de la subpágina
-function simpleforms_reports_cb_view() {
-    ?>
-    <div class="wrap">
-        <h1>Settings</h1>
-        <p>Esta es la subpágina de opciones de tu plugin.</p>
-
-        <form method="post" action="options.php">
-            <?php
-            // Aquí puedes registrar y mostrar tus ajustes de WordPress
-            settings_fields('simple_forms_settings_group');
-            do_settings_sections('plugin-options-settings');
-            submit_button();
-            ?>
-        </form>
-    </div>
-    <?php
 }

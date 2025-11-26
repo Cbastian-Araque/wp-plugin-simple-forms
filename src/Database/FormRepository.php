@@ -92,46 +92,55 @@ class SimpleForms_FormsRepository
   /**
    * Elimina un formulario + todos sus registros asociados (cascada)
    */
-  public function delete_form_cascade($form_name)
+  public function delete_form_cascade_by_id($form_id)
   {
     global $wpdb;
 
-    // 1. Obtener el formulario para saber su ID
-    $form = $this->get_form($form_name);
+    $form_id = intval($form_id);
+    if ($form_id <= 0) {
+      return false; // ID inválido
+    }
+
+    // 1. Verificar si el formulario existe
+    $form = $wpdb->get_row(
+      $wpdb->prepare("SELECT * FROM {$this->table_schemas} WHERE id = %d", $form_id),
+      ARRAY_A
+    );
+
     if (!$form) {
       return false; // no existe
     }
-
-    $form_id = intval($form['id']);
 
     // Tablas secundarias
     $table_records      = $this->prefix . TABLE_PREFIX . TABLE_RECORDS;
     $table_records_meta = $this->prefix . TABLE_PREFIX . TABLE_ENTRY_META;
     $table_files        = $this->prefix . TABLE_PREFIX . TABLE_FILES;
 
-    // 2. Obtener todos los registros (entries)
+    // 2. Obtener todos los registros del formulario
     $entries = $wpdb->get_col(
       $wpdb->prepare("SELECT id FROM {$table_records} WHERE form_id = %d", $form_id)
     );
 
     if (!empty($entries)) {
+
+      // Crear lista segura de IDs
       $entries_list = implode(',', array_map('intval', $entries));
 
-      // 3. Eliminar metadata de registros
+      // 3. Eliminar metadata
       $wpdb->query("DELETE FROM {$table_records_meta} WHERE entry_id IN ($entries_list)");
 
-      // 4. Eliminar archivos relacionados
+      // 4. Eliminar archivos
       $wpdb->query("DELETE FROM {$table_files} WHERE entry_id IN ($entries_list)");
 
-      // 5. Eliminar registros
+      // 5. Eliminar registros principales
       $wpdb->query("DELETE FROM {$table_records} WHERE id IN ($entries_list)");
     }
 
-    // 6. Eliminar el formulario final
+    // 6. Eliminar el formulario
     return $wpdb->delete(
       $this->table_schemas,
-      ['form_name' => $form_name],
-      ['%s']
+      ['id' => $form_id],
+      ['%d']
     );
   }
 

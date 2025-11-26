@@ -15,12 +15,21 @@ function simpleforms_enqueue_scripts()
 
   wp_register_script(
     'form_scripts',
-    PLUGIN_URL . '/assets/dist/build.js',
-    [],
+    PLUGIN_URL . '/assets/dist/main.js',
+    ['jquery'],
     PLUGIN_VERSION,
     true
   );
   wp_enqueue_script('form_scripts');
+
+  wp_register_script(
+    'form_ajax',
+    PLUGIN_URL . '/assets/dist/ajax.js',
+    ['jquery'],
+    PLUGIN_VERSION,
+    true
+  );
+  wp_enqueue_script('form_ajax');
 
   wp_localize_script(
     'form_scripts',
