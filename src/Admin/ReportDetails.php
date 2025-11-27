@@ -40,7 +40,7 @@ function simple_forms_reports_details_cb()
       return;
     }
 
-    echo "<h1>Reporte del formulario: <strong>" . esc_html($form['form_title']) . "</strong></h1>";
+    echo "<h1 class='title-option-page'>Reporte del formulario: <strong>" . esc_html($form['form_title']) . "</strong></h1>";
 
     echo '<p><a href="' . esc_url(admin_url('admin.php?page=forms-reports')) . '" class="button">← Volver al listado</a></p>';
 
@@ -170,13 +170,13 @@ function simple_forms_reports_details_cb()
   // Vista lista general (si no viene form_id)
   // ---------------------------
 
-  echo '<h1>Formularios creados</h1>';
+  echo '<h1 class="title-option-page">Reporte de envíos de formularios</h1>';
 
   // Obtener formularios
   $forms = $wpdb->get_results("SELECT id, form_name, form_title FROM {$table_forms}", ARRAY_A);
 
   if (!$forms) {
-    echo '<p>No hay formularios creados.</p>';
+    echo '<p>No hay registros para mostrar.</p>';
     echo '</div>';
     return;
   }

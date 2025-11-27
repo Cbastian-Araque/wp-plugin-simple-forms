@@ -74,25 +74,63 @@ class SimpleForms_FormSubmit
 
       require_once ABSPATH . 'wp-admin/includes/file.php';
 
-      foreach ($_FILES as $field => $file) {
+      foreach ($_FILES as $field => $file_data) {
+        if (is_array($file_data['name'])) {
 
-        if ($file['error'] !== UPLOAD_ERR_OK) continue;
+          $count = count($file_data['name']);
 
-        $upload = wp_handle_upload($file, ['test_form' => false]);
+          for ($i = 0; $i < $count; $i++) {
 
-        if (!isset($upload['url'])) continue;
+            if ($file_data['error'][$i] !== UPLOAD_ERR_OK) {
+              continue;
+            }
 
-        $wpdb->insert(
-          $table_files,
-          [
-            'entry_id'   => $entry_id,
-            'field_name' => sanitize_text_field($field),
-            'file_url'   => esc_url_raw($upload['url']),
-            'file_path'  => sanitize_text_field($upload['file']),
-            'file_size'  => $file['size'],
-            'file_type'  => $file['type'],
-          ]
-        );
+            // Adaptar estructura a formato normal para wp_handle_upload()
+            $single_file = [
+              'name'     => $file_data['name'][$i],
+              'type'     => $file_data['type'][$i],
+              'tmp_name' => $file_data['tmp_name'][$i],
+              'error'    => $file_data['error'][$i],
+              'size'     => $file_data['size'][$i]
+            ];
+
+            $upload = wp_handle_upload($single_file, ['test_form' => false]);
+
+            if (!isset($upload['url'])) continue;
+
+            $wpdb->insert(
+              $table_files,
+              [
+                'entry_id'   => $entry_id,
+                'field_name' => sanitize_text_field($field),
+                'file_url'   => esc_url_raw($upload['url']),
+                'file_path'  => sanitize_text_field($upload['file']),
+                'file_size'  => $single_file['size'],
+                'file_type'  => $single_file['type'],
+              ]
+            );
+          }
+        } else {
+          // Campo simple de un solo archivo
+          if ($file_data['error'] === UPLOAD_ERR_OK) {
+
+            $upload = wp_handle_upload($file_data, ['test_form' => false]);
+
+            if (!isset($upload['url'])) continue;
+
+            $wpdb->insert(
+              $table_files,
+              [
+                'entry_id'   => $entry_id,
+                'field_name' => sanitize_text_field($field),
+                'file_url'   => esc_url_raw($upload['url']),
+                'file_path'  => sanitize_text_field($upload['file']),
+                'file_size'  => $file_data['size'],
+                'file_type'  => $file_data['type'],
+              ]
+            );
+          }
+        }
       }
     }
 

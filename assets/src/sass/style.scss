@@ -1,11 +1,18 @@
 @use './variables' as *;
-@use './form-preview-schema' as *;
-@use './form-add_field' as *;
 @use './components' as *;
+@use './form-preview-schema' as *;
+@use './form-view-reports' as *;
+@use './form-add_field' as *;
 
 #wpcontent{
   padding: 0;
   background-color: $white;
+}
+
+.title-option-page{
+  font-size: 30px !important;
+  font-weight: 900 !important;
+  color: $blue50;
 }
 
 // formulario de creación

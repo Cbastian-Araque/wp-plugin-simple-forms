@@ -18,7 +18,7 @@ function simple_forms_listing_cb()
 ?>
 
   <section class="simple-forms-list-container wrap">
-    <?php printf('<h1>%s</h1>', __('Listado de Formularios', 'simple-forms')) ?>
+    <?php printf('<h1 class="title-option-page">%s</h1>', __('Listado de Formularios', 'simple-forms')) ?>
 
     <a href="<?php echo admin_url('admin.php?page=simple-forms') ?>" class="button button-primary"><?php echo __('Crear Nuevo Formulario','simple-forms') ?></a>
     <table class="wp-list-table widefat fixed striped" id="table_simple_form_list">

@@ -27,6 +27,14 @@ form{
       display: flex;
       flex-direction: column;
       gap: 5px;
+
+      &.single-checkbox{
+        flex-direction: row;
+
+        label{
+          order: 2;
+        }
+      }
   
       label{
         font-size: 16px;
@@ -34,7 +42,7 @@ form{
         font-weight: 400;
       }
   
-      input{
+      input, select, textarea{
         border: 1px solid var(--border);
         border-radius: 4px;
         padding: 5px 10px;

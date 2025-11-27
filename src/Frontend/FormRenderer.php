@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Clase que Renderiza el JSON (desde DB) del formulario
  */
@@ -15,7 +16,7 @@ class FormRenderer
 
         ob_start();
 
-        echo '<form class="simple-form" action="'. admin_url('admin-post.php') .'" method="post" enctype="multipart/form-data">';
+        echo '<form class="simple-form" action="' . admin_url('admin-post.php') . '" method="post" enctype="multipart/form-data">';
 
         echo "<div class='wrapper-fields'>";
 
@@ -28,8 +29,10 @@ class FormRenderer
             $placeholder = isset($field['placeholder']) ? esc_attr($field['placeholder']) : '';
             $value       = isset($field['value']) ? esc_attr($field['value']) : '';
             $class       = isset($field['class']) ? esc_attr($field['class']) : '';
+            $multiple    = $field['extras']['multiple'] === 'true' ? 'multiple' : '';
+            $single_checkbox = $field['extras']['is_tos'] === 'true' ? true : false;
 
-            echo "<fieldset class='sf-field'>";
+            echo "<fieldset class='sf-field ". ($single_checkbox ? 'single-checkbox' : '') ."'>";
 
             if ($label) {
                 echo "<label for='$field_id'>$label</label>";
@@ -56,7 +59,7 @@ class FormRenderer
                             class='$class'
                             $required
                           >";
-                break;
+                    break;
 
 
                 /* ---------------------------
@@ -70,14 +73,14 @@ class FormRenderer
                             class='$class'
                             $required
                           >$value</textarea>";
-                break;
+                    break;
 
 
                 /* ---------------------------
                    SELECT
                 ---------------------------- */
                 case 'select':
-                    $options = $field['options'] ?? [];
+                    $options = $field['extras']['options'] ?? [];
 
                     echo "<select id='$field_id' name='$field_id' class='$class' $required>";
                     echo "<option value=''>Seleccione...</option>";
@@ -91,30 +94,52 @@ class FormRenderer
                     }
 
                     echo "</select>";
-                break;
+                    break;
 
 
                 /* ---------------------------
                    CHECKBOX
                 ---------------------------- */
                 case 'checkbox':
-                    $checked = ($value === 'on' || $value === '1') ? 'checked' : '';
+                    $options = $field['extras']['options'] ?? [];
 
-                    echo "<input 
-                            type='checkbox' 
-                            id='$field_id' 
-                            name='$field_id'
-                            class='$class'
-                            $checked $required
-                          >";
-                break;
+                    if ($single_checkbox) {
+                        echo "<div class='sf-checkbox-group $class'>";
+                        echo "<input 
+                        type='checkbox' 
+                        id='$field_id' 
+                        name='$field_id'
+                        class='$class'
+                        $required
+                      >";
+                        echo "</div>";
+                    } else {
+                        echo "<div class='sf-checkbox-group $class'>";
+
+                        foreach ($options as $opt_value => $opt_label) {
+                            $opt_value = esc_attr($opt_value);
+                            $opt_label = esc_html($opt_label);
+
+                            echo "
+                            <p class='sf-checkbox-option'>
+                                <input type='checkbox' 
+                                       name='{$field_id}[]'
+                                       value='$opt_value'>
+                                $opt_label
+                            </p>
+                        ";
+                        }
+
+                        echo "</div>";
+                    }
+                    break;
 
 
                 /* ---------------------------
                    RADIO GROUP
                 ---------------------------- */
                 case 'radio':
-                    $options = $field['options'] ?? [];
+                    $options = $field['extras']['options'] ?? [];
 
                     echo "<div class='sf-radio-group $class'>";
 
@@ -136,7 +161,7 @@ class FormRenderer
                     }
 
                     echo "</div>";
-                break;
+                    break;
 
 
                 /* ---------------------------
@@ -146,11 +171,11 @@ class FormRenderer
                     echo "<input 
                             type='file' 
                             id='$field_id' 
-                            name='$field_id'
+                            name='{$field_id}[]'
                             class='$class'
-                            $required
+                            $required $multiple
                           >";
-                break;
+                    break;
 
 
                 /* ---------------------------
@@ -165,7 +190,7 @@ class FormRenderer
 
         echo '<button type="submit">Enviar</button>';
         echo '</div>';
-        echo '<input type="hidden" name="simple_form_id" value="'. $form['form_name'] .'">';
+        echo '<input type="hidden" name="simple_form_id" value="' . $form['form_name'] . '">';
         echo '<input type="hidden" name="simple_form_submit" value="1">';
         echo '<input type="hidden" name="action" value="simple_forms_submit">';
         echo '</form>';
