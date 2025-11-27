@@ -221,7 +221,6 @@ function simple_forms_reports_details_cb()
     echo '<td>' . intval($registros_semana) . '</td>';
     echo '<td>
             <a href="' . esc_url(admin_url('admin.php?page=forms-reports&form_id=' . intval($f['id']))) . '" class="button button-secondary">Ver reporte</a>
-            <a href="#" class="delete-form button btn-caution" data-id="' . intval($f['id']) . '">Eliminar</a>
           </td>';
     echo '</tr>';
   }
