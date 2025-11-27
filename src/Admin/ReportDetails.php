@@ -117,8 +117,9 @@ function simple_forms_reports_details_cb()
             if (is_array($array)) {
               echo "<span><strong>{$label}:</strong> ";
 
-              foreach ($array as $item) {
-                echo "<span>" . esc_html($item) . "</span>";
+              foreach ($array as $key => $item) {
+                $separator = $key !== 0 ? ', ' : '';
+                echo $separator . "<span>" . esc_html($item) . "</span>";
               }
 
               echo "</span>";
@@ -193,7 +194,8 @@ function simple_forms_reports_details_cb()
   echo '<h1 class="title-option-page">Reporte de envíos de formularios</h1>';
 
   // Obtener formularios
-  $forms = $wpdb->get_results("SELECT id, form_name, form_title FROM {$table_forms}", ARRAY_A);
+  $forms = $wpdb->get_results("SELECT f.id, f.form_name, f.form_title FROM {$table_forms} AS f INNER JOIN {$table_records} AS e ON f.id = e.form_id GROUP BY f.id", ARRAY_A);
+  // $forms = $wpdb->get_results("SELECT id, form_name, form_title FROM {$table_forms}", ARRAY_A);
 
   if (!$forms) {
     echo '<p>No hay registros para mostrar.</p>';
