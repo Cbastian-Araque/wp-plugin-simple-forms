@@ -103,11 +103,32 @@ function simple_forms_reports_details_cb()
       // Campos
       echo "<td>";
       if ($meta) {
-        echo "<ul style='margin:0;padding-left:18px;'>";
         foreach ($meta as $m) {
-          echo "<li><strong>" . esc_html($m['field_name']) . ":</strong> " . esc_html($m['field_value']) . "</li>";
+
+          $label = esc_html($m['field_name']);
+          $value = $m['field_value'];
+
+          // ¿Es un valor serializado?
+          if (is_serialized($value)) {
+
+            $array = maybe_unserialize($value);
+
+            // Si realmente es array, lo mostramos bien
+            if (is_array($array)) {
+              echo "<span><strong>{$label}:</strong> ";
+
+              foreach ($array as $item) {
+                echo "<span>" . esc_html($item) . "</span>";
+              }
+
+              echo "</span>";
+              continue;
+            }
+          }
+
+          // Valor normal (texto)
+          echo "<p><strong>{$label}:</strong> " . esc_html($value) . "</p>";
         }
-        echo "</ul>";
       } else {
         echo "<em>No hay campos.</em>";
       }
@@ -116,7 +137,7 @@ function simple_forms_reports_details_cb()
       // Archivos -> mostrar enlaces de descarga
       echo "<td>";
       if ($files) {
-        echo "<ul style='margin:0;padding-left:18px;'>";
+        echo "<ul style='margin:0;padding-left:18px;list-style:disc'>";
         foreach ($files as $f) {
           $url = $f['file_url'] ?? '';
           $path = $f['file_path'] ?? '';
@@ -138,8 +159,7 @@ function simple_forms_reports_details_cb()
           if ($url_esc) {
             echo '<li>';
             echo '<a href="' . $url_esc . '" target="_blank" rel="noopener noreferrer" download>' . esc_html($filename) . '</a>';
-            echo esc_html($extra_str);
-            echo ' <span style="color:#777;font-size:12px;"> — campo: ' . esc_html($f['field_name']) . '</span>';
+            echo '<div><small>' . esc_html($extra_str) . '</small><small style="color:#777;font-size:12px;"> — campo: ' . esc_html($f['field_name']) . '</small></div>';
             echo '</li>';
           } else {
             // Si no hay URL pero sí path local, intentar mostrar path
