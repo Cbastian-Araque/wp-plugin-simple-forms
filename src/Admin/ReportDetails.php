@@ -47,7 +47,7 @@ function simple_forms_reports_details_cb()
     /** Obtener registros del formulario */
     $entries = $wpdb->get_results(
       $wpdb->prepare(
-        "SELECT id, submitted_at 
+        "SELECT id, submitted_at, url_register 
                  FROM {$table_records} 
                  WHERE form_id = %d 
                  ORDER BY submitted_at DESC",
@@ -68,6 +68,7 @@ function simple_forms_reports_details_cb()
                     <th>Fecha</th>
                     <th>Campos enviados</th>
                     <th>Archivos</th>
+                    <th>Página del registro</th>
                 </tr>
               </thead>';
     echo '<tbody>';
@@ -176,6 +177,8 @@ function simple_forms_reports_details_cb()
         echo "<em>No hay archivos adjuntos.</em>";
       }
       echo "</td>";
+
+      echo "<td>" . sanitize_text_field($entry['url_register']) . "</td>";
 
       echo "</tr>";
     }
