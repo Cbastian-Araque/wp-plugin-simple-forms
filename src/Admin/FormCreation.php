@@ -49,7 +49,7 @@ function simple_forms_render_page()
 
   <div class="wrapper-form wrapper-create-form">
     <div class="container-head">
-      <h1><?php echo isset($_GET['form_id']) ? 'Editar' : 'Crear' ?> formulario</h1>
+      <h1><?php echo isset($_GET['form_id']) ? 'Editando' : 'Crear' ?> formulario</h1>
     </div>
 
     <div class="preview-form">
@@ -113,6 +113,7 @@ function simple_forms_render_page()
         </div>
 
         <div class="fields-hidden">
+          <input type="hidden" id="simpleforms-edit-form-id" value="<?php echo isset($_GET['form_id']) ? esc_attr($_GET['form_id']) : '' ?>">
           <div class="form-settings form-emails">
             <span>Correos de notificación</span>
             <input type="text" placeholder="correos separados por coma (,)" class="emails-form info-form" id="emails-form" value="<?php echo (isset($_GET['form_id']) && isset($form['settings']['email_list'])) ? $form['settings']['email_list'] : ''  ?>">

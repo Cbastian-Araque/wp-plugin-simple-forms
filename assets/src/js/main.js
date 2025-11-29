@@ -59,14 +59,14 @@ class SimpleField {
       required: required
     };
 
-    if( Object.keys(extras[0]).length > 0 ){ // Agregar valores adicionales
+    if (Object.keys(extras[0]).length > 0) { // Agregar valores adicionales
       fieldObjProperties[fieldName]['extras'] = extras[0] || {};
     }
 
     return JSON.stringify(fieldObjProperties, null, 0);
   }
 
-  createField() {    
+  createField() {
     const fragmentField = d.createDocumentFragment(); // Fragmento que recibirá el HTML
     const tagFieldsetWrapper = d.createElement('div'); // Contenedor que recibirá todo el fragmento
     const detailsField = d.createElement('DIV'); // Label de input
@@ -90,7 +90,7 @@ class SimpleField {
     let fieldName; // Se usará para guardar el nombre del cmapo (field_ o textarea_)
     let addNumber; // Número del campo para evitar repetir el campo o textarea (field_1, field_2, etc)
 
-    if(!this.editing){
+    if (!this.editing) {
       if (this.type === 'textarea' || this.type === 'file') {
         addNumber = SimpleField.numberTextarea;
         SimpleField.numberTextarea++;
@@ -103,16 +103,16 @@ class SimpleField {
     }
 
     let fieldJson;
-    if(this.editing){
+    if (this.editing) {
       $(detailsField).html(`<div class="field-label">${this.label}</div><span class="field-type">${this.type}</span>`);
       fieldName = $('.is-editing').data('fieldId');
-      fieldJson = SimpleField.CreateJSONField(this.type,this.label,this.required,this.extras,fieldName);
+      fieldJson = SimpleField.CreateJSONField(this.type, this.label, this.required, this.extras, fieldName);
 
       $('.is-editing').find('.field-label').html(this.label);
       $('.is-editing').find('.field-type').text(this.type);
       $('.is-editing').attr('data-info-field', fieldJson);
     } else {
-      fieldJson = SimpleField.CreateJSONField(this.type,this.label,this.required,this.extras,fieldName);
+      fieldJson = SimpleField.CreateJSONField(this.type, this.label, this.required, this.extras, fieldName);
 
       $(tagFieldsetWrapper).attr('data-info-field', fieldJson); // JSON como atributo al contneedor del campo
       $(tagFieldsetWrapper).attr('data-field-id', fieldName); // Identificador para el campo
@@ -159,7 +159,7 @@ jQuery(function ($) {
   let $btnAddOption = $('.btn-add-option'); // BOtón para agregar opciones (para el campo select)
   let $btnAddRadio = $('.btn-add-checkradio'); // BOtón para agregar opciones (para el campo radio)
 
-  function printOptionElement(key = '', value = ''){ // HTML para las opciones que se agregan al campo
+  function printOptionElement(key = '', value = '') { // HTML para las opciones que se agregan al campo
     return `
     <div class="option-select option-radio option-checkbox option-field">
       <div>
@@ -176,11 +176,11 @@ jQuery(function ($) {
   }
 
   // Expresión que convierte a minúscula, elimina acentos (áéíóú => aeiou) y reemplaza " " por "_"
-  function regexMinAcentos(string){
+  function regexMinAcentos(string) {
     return string.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, ''); // Expresión regular 
   }
 
-  function clearSettingsField(){
+  function clearSettingsField() {
     // Limpiar Los datos básicos de los campos
     $htmlTiny.setContent(''); // Label
     $selectField.val('text').trigger('change'); // Select
@@ -196,7 +196,7 @@ jQuery(function ($) {
     }
   }
 
-  $('.btn-edit').on('click', function(e){ // Actualizar campo
+  $('.btn-edit').on('click', function (e) { // Actualizar campo
     $containerButtonsEditing.removeClass('editing');
     $btnAddField.removeClass('no-show');
     add_field(true);
@@ -205,7 +205,7 @@ jQuery(function ($) {
   });
 
   // Cancelar edición
-  $($containerButtonsEditing).find('.btn-cancel').on('click', function(){
+  $($containerButtonsEditing).find('.btn-cancel').on('click', function () {
     $containerButtonsEditing.removeClass('editing');
     $('.field-form').removeClass('is-editing');
 
@@ -213,7 +213,7 @@ jQuery(function ($) {
     clearSettingsField();
   });
 
-  $btnAddField.on('click', function(){
+  $btnAddField.on('click', function () {
     add_field();
   });
 
@@ -241,14 +241,14 @@ jQuery(function ($) {
 
     const objOptions = {} // Opciones para el campo select / radio / checkbox
     const VALIDATION_RULES = []; // Reglas de validación
-    
-    if( options.length > 0){
-      $(options).each(function(i, el){
+
+    if (options.length > 0) {
+      $(options).each(function (i, el) {
         let key = $(el).find('.key-option').val();
         let value = $(el).find('.value-option').val();
-        
-        if( key === '' ){
-          key = regexMinAcentos( value );
+
+        if (key === '') {
+          key = regexMinAcentos(value);
         } else {
           key = key;
         }
@@ -257,48 +257,48 @@ jQuery(function ($) {
         objExtras['options'] = objOptions;
       });
     }
-    
-    if(typeField === 'text'){
+
+    if (typeField === 'text') {
       for (let i = 0; i < $validationRules.length; i++) {
         if ($validationRules[i].checked) {
           VALIDATION_RULES.push($validationRules[i].value);
         }
       }
 
-      if(VALIDATION_RULES.length > 0){
+      if (VALIDATION_RULES.length > 0) {
         objExtras['validation_rules'] = VALIDATION_RULES;
       }
     }
-    if(typeField === 'select'){
+    if (typeField === 'select') {
       objExtras['select_default'] = defaultSelect;
     }
-    if(typeField === 'file'){
+    if (typeField === 'file') {
       objExtras['accept'] = listMimetypes;
       objExtras['max_size'] = maxSize;
       objExtras['multiple'] = multipleFiles;
     }
-    if(typeField === 'checkbox'){
+    if (typeField === 'checkbox') {
       objExtras['is_tos'] = isToS;
     }
-    if(typeField === 'textarea'){
+    if (typeField === 'textarea') {
       objExtras['value'] = textareaValueDefault;
       objExtras['rows'] = textareaRows;
       objExtras['cols'] = textareaCols;
     }
 
-    if(typeField === 'date'){
-      if( $validateDate.val() !== ''){
-        VALIDATION_RULES.push( $validateDate.val() );
+    if (typeField === 'date') {
+      if ($validateDate.val() !== '') {
+        VALIDATION_RULES.push($validateDate.val());
       }
 
       objExtras['validation_rules'] = VALIDATION_RULES;
     }
 
-    if(classField !== ''){ // Agregar clase personalizada al campo
+    if (classField !== '') { // Agregar clase personalizada al campo
       objExtras['div_class'] = classField;
     }
 
-    if ( $htmlTiny.getContent().trim() !== '' ) { 
+    if ($htmlTiny.getContent().trim() !== '') {
       $('#wp-labelfield-wrap').closest('.basic-field').removeClass('no-empty');
     } else {
       $('#wp-labelfield-wrap').closest('.basic-field').addClass('no-empty');
@@ -310,26 +310,26 @@ jQuery(function ($) {
       $fileMimetypes.closest('p').removeClass('no-empty');
     }
 
-    if(labelInput !== '' && listMimetypes !== ''){
+    if (labelInput !== '' && listMimetypes !== '') {
       $($settingsField).removeClass('visible-settings')
       const newField = new SimpleField(typeField, labelInput, requiredField, [objExtras], isEditing);
       const fieldElement = newField.createField();
-  
+
       // Añadir el nuevo campo al contenedor
       $wrapperFields.append(fieldElement);
       clearSettingsField(); // limpiar/reiniciar el formulario de creación/edición
     }
   }
 
-  $($selectField).on('change', function(e){
+  $($selectField).on('change', function (e) {
     let fieldSelected = $(e.target).val();
     $(`[class^="options-"]`).html(''); // Limpiar los campos adicionales (extra)
     $(`.extra`).removeClass('extra-visible');
     $(`.extra-${fieldSelected}`).addClass('extra-visible'); // Mostrar campos extras de campo seleccionado
   });
 
-  $checkedForTyc.on('change', function(){
-    if( this.checked ){
+  $checkedForTyc.on('change', function () {
+    if (this.checked) {
       $wrapperOptions.html('');
       $btnAddRadio.hide();
     } else {
@@ -338,25 +338,25 @@ jQuery(function ($) {
   });
 
   // Agregar opciones al campo (select, checkbox, radio)
-  function addOptionField(){
+  function addOptionField() {
     // Agregar opción
-    $($btnAddOption).on('click', function(){
-      $('.options-select').append( printOptionElement() )
+    $($btnAddOption).on('click', function () {
+      $('.options-select').append(printOptionElement())
     });
     // Agregar opción de radio o checkbox
-    $($btnAddRadio).on('click', function(){
-      $('.options-checkbox-radio').append( printOptionElement() )
+    $($btnAddRadio).on('click', function () {
+      $('.options-checkbox-radio').append(printOptionElement())
     });
   }
 
-  function removeElement(){ // Elimina un campo o elemento del campo (opción)
-    $('body').on('click', '.btn-caution', function(e){
+  function removeElement() { // Elimina un campo o elemento del campo (opción)
+    $('body').on('click', '.btn-caution', function (e) {
       $(this).parent().remove();
     });
   }
 
   // Editar campo - Recupera la información del campo a editar y la muestra en el formulario de edición/creación de campo
-  function edit_field(){
+  function edit_field() {
     $('body').click(function (e) {
       if ($(e.target).hasClass('btn-edit-field')) {
         const containerField = $(e.target).closest('.field-form');
@@ -377,16 +377,16 @@ jQuery(function ($) {
             $selectField.val(campo.type).trigger('change');
             $htmlTiny.setContent(campo.label);
             $requiredField.prop('checked', campo.required);
-            
+
             if (campo.extras) { // Obtener los campos extras para editar
               const optionsToEdit = campo.extras.options;
 
-              if(campo.type === 'select' || campo.type === 'checkbox' || campo.type === 'radio'){
+              if (campo.type === 'select' || campo.type === 'checkbox' || campo.type === 'radio') {
                 $defaultSelect.val(campo.extras.select_default); // Asignar el valor por defecto
 
                 $checkedForTyc.prop('checked', campo.extras.is_tos);
 
-                if(campo.extras.is_tos){
+                if (campo.extras.is_tos) {
                   $btnAddRadio.hide();
                 }
 
@@ -398,7 +398,7 @@ jQuery(function ($) {
                 }
               }
 
-              if(campo.type === 'text'){
+              if (campo.type === 'text') {
                 const opciones_rules = campo.extras.validation_rules;
 
                 if (opciones_rules && Array.isArray(opciones_rules)) {
@@ -413,23 +413,23 @@ jQuery(function ($) {
                 }
               }
 
-              if(campo.type === 'textarea'){
+              if (campo.type === 'textarea') {
                 $textareaDefultValue.val(campo.extras.value);
                 $textareaColsVal.val(campo.extras.cols);
                 $textareaRowsVal.val(campo.extras.rows);
               }
 
-              if(campo.type === 'file'){
+              if (campo.type === 'file') {
                 $fileMimetypes.val(campo.extras.accept);
                 $fileSize.val(campo.extras.max_size);
                 $fileMultiple.prop('checked', campo.extras.multiple);
               }
-              if(campo.type === 'date'){
+              if (campo.type === 'date') {
                 const validate_date = campo.extras.validation_rules;
                 $validateDate.val(validate_date[0]).trigger('change');
               }
 
-              $customClassField.val( campo.extras.div_class )
+              $customClassField.val(campo.extras.div_class)
             }
           }
         }
@@ -437,7 +437,7 @@ jQuery(function ($) {
     });
   }
 
-  function dragFields(){
+  function dragFields() {
     let $clone = null;
 
     $wrapperFields.on('dragstart', '.field-form', function (e) {
@@ -473,38 +473,38 @@ jQuery(function ($) {
       e.originalEvent.dataTransfer.setDragImage(dragImage, 0, 0);
       e.originalEvent.dataTransfer.setDragImage(new Image(), 0, 0);
     });
-  
+
     $wrapperFields.on('dragover', function (e) {
       e.preventDefault();
-      
+
       $(this).addClass('dragover');
     });
-    
+
     $wrapperFields.on('dragleave', function (e) {
       $(this).removeClass('dragover');
     });
-    
+
     $wrapperFields.on('drop', function (e) {
       e.preventDefault();
       let fromIndex = e.originalEvent.dataTransfer.getData('text/plain');
       let $draggedField = $(this).find('.field-form').eq(fromIndex);
-  
+
       let $dropTarget = $(e.target).closest('.field-form');
       if ($dropTarget.length && $draggedField[0] !== $dropTarget[0]) {
         let toIndex = $dropTarget.index();
-  
+
         if (fromIndex < toIndex) {
           $dropTarget.after($draggedField);
         } else {
           $dropTarget.before($draggedField);
         }
       }
-  
+
       $('.field-form').removeClass('dragging');
       $(this).removeClass('dragover');
     });
-  
-    $wrapperFields.on('dragend', '.field-form', function() {
+
+    $wrapperFields.on('dragend', '.field-form', function () {
       $(this).removeClass('dragging'); // Restablecer estilos al finalizar el arrastre
       $(this).css('opacity', '1').removeClass('dragging');
 
@@ -514,7 +514,7 @@ jQuery(function ($) {
       }
     });
 
-    $(document).on('drag', function(e) {
+    $(document).on('drag', function (e) {
       if ($clone) {
         $clone.css({
           top: e.originalEvent.pageY + 5 + 'px',
@@ -526,7 +526,7 @@ jQuery(function ($) {
 
   function notAllowFieldsEmpty(fields) { // Validar que los campos no estén vacíos
     let fieldValid = true;
-    
+
     for (let i = 0; i < fields.length; i++) {
       const el = fields[i];
       if ($(el).val() === '') {
@@ -571,7 +571,7 @@ jQuery(function ($) {
     // Observar el contenedor de campos
     const targetNode = $('.fields-added')[0]; // Obtener el elemento DOM
     const config = { childList: true, subtree: true }; // Observar adiciones de nodos
-    
+
     observer.observe(targetNode, config);
 
     // Detectar cambios en los campos ya creados
@@ -593,39 +593,44 @@ jQuery(function ($) {
     });
 
     // Restablecer el flag al guardar el formulario
-    $($btnSaveForm).on('click', function(){
+    $($btnSaveForm).on('click', function () {
       let isValid = notAllowFieldsEmpty(basicInfoForm); // Cuando se guarde el formulario, permitir salir de la página o recargar
-      if(isValid){
+      if (isValid) {
         formModified = false;
       }
     });
   }
 
-  // Guardar JSON
+  // Guardar/Editar JSON
   let formsArray = []; // Cadena JSON inicial
+  const editingFormId = $('#simpleforms-edit-form-id').val() || null;
   $btnSaveForm.on('click', (e) => {
     e.preventDefault();
-    const formTitle = $formPreview.find('.title-form').val(); // Titulo/ID de formulario
-    const formEmails = $formPreview.find('.emails-form').val(); // Lista de emails a notificar
-    const formBtnLabel = $formPreview.find('.label-button').val(); // Etiqeuta del botón
-    const formFields = $formPreview.find('.fields-added .field-form').toArray(); // Campos del formulario (field_x, textarea_x) 
-    const formId = regexMinAcentos(formTitle); // Convierte el título del formulario a formato id
 
-    // Verifica si el ID ya existe
-    if (formsArray.some(form => form.id === formId)) {
-      alert(`El formulario con ID "${formId}" ya existe y no se puede agregar nuevamente.`);
+    const formTitle = $formPreview.find('.title-form').val();
+    const formEmails = $formPreview.find('.emails-form').val();
+    const formBtnLabel = $formPreview.find('.label-button').val();
+    const formFields = $formPreview.find('.fields-added .field-form').toArray();
+
+    // SI ES EDICIÓN se usa el ID recibido
+    // SI ES NUEVO se genera uno a partir del título
+    const formId = editingFormId
+      ? editingFormId
+      : regexMinAcentos(formTitle);
+
+    // Si es creación, SÍ debe validarse que no exista el ID
+    if (!editingFormId && formsArray.some(form => form.id === formId)) {
+      alert(`El formulario con ID "${formId}" ya existe.`);
       return;
     }
 
-    // Construye el objeto de campos
+    // Construcción de campos
     let dataFields = {};
-    formFields.forEach((fieldset, index) => {
+    formFields.forEach(fieldset => {
       let fieldData = $(fieldset).data('infoField');
-
-      dataFields = Object.assign({}, dataFields, fieldData); // Concatenar los valores de cada campo field_1: {}, field_2{}, textarea_1:{} etc
+      dataFields = Object.assign({}, dataFields, fieldData);
     });
 
-    // Construye el JSON final
     const formData = {
       id: formId,
       version: 1,
@@ -640,32 +645,31 @@ jQuery(function ($) {
       }
     };
 
-    // Validar que los datos básicos estén diligenciados para guardar el formulario
+    // Validar campos
     let isValid = notAllowFieldsEmpty(basicInfoForm);
+    if (!isValid) return;
 
-    if(isValid){
-      formsArray.push(formData); // Agrega el formulario al array
+    // 🔹 Importante: actualizar el JSON en la vista previa
+    $formPreview.attr('data-json-form', JSON.stringify(formData));
 
-      // Se genera un json con la información del formulario
-      $formPreview.attr('data-json-form', JSON.stringify(formData, null, 0));
-
-      $.ajax({
-        url: ajaxurl,
-        method: "POST",
-        data: {
-          action: "simpleforms_save_form",
-          form: formData
-        },
-        success: function (response) {
-          console.log("Guardado OK", response);
-          alert("Formulario guardado correctamente.");
-        },
-        error: function (err) {
-          console.error("Error al guardar:", err);
-          alert("Error al guardar el formulario");
-        }
-      });
-    }
+    $.ajax({
+      url: ajaxurl,
+      method: "POST",
+      data: {
+        action: "simpleforms_save_form",
+        form: formData,
+        is_edit: editingFormId ? 1 : 0 // para que PHP sepa que es edición
+      },
+      success: function (response) {
+        console.log("Guardado OK", response);
+        alert("Formulario guardado correctamente.");
+        window.location.reload();
+      },
+      error: function (err) {
+        console.error("Error al guardar:", err);
+        alert("Error al guardar el formulario");
+      }
+    });
   });
 
   // Inicializar las funciones
