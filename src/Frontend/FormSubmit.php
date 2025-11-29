@@ -37,11 +37,19 @@ class SimpleForms_FormSubmit
       wp_die("Error: el formulario no existe en la base de datos.");
     }
 
+    // Obtener y decodificar schema de campos
+    $fields_schema = [];
+
+    if (!empty($form->form_fields)) {
+      $decoded = json_decode($form->form_fields, true);
+      $fields_schema = $decoded;
+    }
+
     // Crear registro principal
     $wpdb->insert(
       $table_entries,
       [
-        'form_id' => $form->id,
+        'form_id'      => $form->id,
         'url_register' => esc_url_raw($_SERVER['HTTP_REFERER'])
       ]
     );
@@ -55,6 +63,11 @@ class SimpleForms_FormSubmit
         continue;
       }
 
+      // Obtener label desde el schema
+      $field_label = isset($fields_schema[$key]['label'])
+        ? wp_strip_all_tags($fields_schema[$key]['label'])
+        : $key;
+
       if (is_array($value)) {
         $value = maybe_serialize($value);
       }
@@ -64,6 +77,7 @@ class SimpleForms_FormSubmit
         [
           'entry_id'    => $entry_id,
           'field_name'  => sanitize_text_field($key),
+          'field_label' => sanitize_text_field($field_label),
           'field_value' => sanitize_text_field($value),
         ]
       );
@@ -75,6 +89,7 @@ class SimpleForms_FormSubmit
       require_once ABSPATH . 'wp-admin/includes/file.php';
 
       foreach ($_FILES as $field => $file_data) {
+
         if (is_array($file_data['name'])) {
 
           $count = count($file_data['name']);
@@ -85,7 +100,6 @@ class SimpleForms_FormSubmit
               continue;
             }
 
-            // Adaptar estructura a formato normal para wp_handle_upload()
             $single_file = [
               'name'     => $file_data['name'][$i],
               'type'     => $file_data['type'][$i],
@@ -111,7 +125,7 @@ class SimpleForms_FormSubmit
             );
           }
         } else {
-          // Campo simple de un solo archivo
+
           if ($file_data['error'] === UPLOAD_ERR_OK) {
 
             $upload = wp_handle_upload($file_data, ['test_form' => false]);

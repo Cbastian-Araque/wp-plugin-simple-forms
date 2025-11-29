@@ -122,6 +122,7 @@ class SimpleForms_Migration
       id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
       entry_id BIGINT(20) UNSIGNED NOT NULL,
       field_name VARCHAR(255) NOT NULL,
+      field_label VARCHAR(255) NOT NULL,
       field_value LONGTEXT,
       PRIMARY KEY (id),
       KEY entry_id (entry_id)

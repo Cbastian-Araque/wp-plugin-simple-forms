@@ -78,7 +78,7 @@ function simple_forms_reports_details_cb()
       /** Obtener campos del registro actual */
       $meta = $wpdb->get_results(
         $wpdb->prepare(
-          "SELECT field_name, field_value 
+          "SELECT field_name, field_label, field_value 
                      FROM {$table_meta} 
                      WHERE entry_id = %d",
           $entry['id']
@@ -105,8 +105,7 @@ function simple_forms_reports_details_cb()
       echo "<td>";
       if ($meta) {
         foreach ($meta as $m) {
-
-          $label = esc_html($m['field_name']);
+          $label = esc_html($m['field_label']);
           $value = $m['field_value'];
 
           // ¿Es un valor serializado?
