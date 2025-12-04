@@ -40,12 +40,13 @@ function simple_forms_reports_details_cb()
       return;
     }
 
+    $export_url = admin_url('admin-post.php?action=simpleforms_export_csv&form_id=' . $form_id);
     echo "<h1 class='title-option-page'>Reporte del formulario: <strong>" . esc_html($form['form_title']) . "</strong></h1>";
 
+    echo "<div style='display: flex; gap: 20px; align-items:center'>";
     echo '<p><a href="' . esc_url(admin_url('admin.php?page=forms-reports')) . '" class="button">← Volver al listado</a></p>';
-
-    $export_url = admin_url('admin-post.php?action=simpleforms_export_csv&form_id=' . $form_id);
     echo '<a href="'.esc_url($export_url).'" class="button button-primary">📥 Descargar CSV</a>';
+    echo "</div>";
 
     /** Obtener registros del formulario */
     $entries = $wpdb->get_results(

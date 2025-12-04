@@ -66,8 +66,9 @@ class SimpleForms_FormHandler
     }
   }
 
-  public function export_csv()
+  public static function export_csv()
   {
+
     if (!current_user_can('manage_options')) {
       wp_die('No tienes permisos suficientes.');
     }
@@ -82,6 +83,7 @@ class SimpleForms_FormHandler
 
     $table_entries = $wpdb->prefix . TABLE_PREFIX . TABLE_RECORDS;
     $table_meta    = $wpdb->prefix . TABLE_PREFIX . TABLE_ENTRY_META;
+    $table_files   = $wpdb->prefix . TABLE_PREFIX . TABLE_FILES;
     $table_forms   = $wpdb->prefix . TABLE_PREFIX . TABLE_FORMS_SCHEMAS;
 
     // Obtener información del formulario
@@ -96,89 +98,107 @@ class SimpleForms_FormHandler
 
     $filename = sanitize_title($form['form_title']) . '-reporte-' . date('Y-m-d') . '.csv';
 
-    // Headers para forzar descarga
+    // CSV headers
     header("Content-Type: text/csv; charset=UTF-8");
     header("Content-Disposition: attachment; filename={$filename}");
     header("Pragma: no-cache");
     header("Expires: 0");
 
     $output = fopen("php://output", "w");
-    // BOM UTF-8 para Excel
+
+    // Agregar BOM UTF-8
     fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
-    // 1. Obtener todos los entry_id (registros) del formulario
+    // 1. Obtener todos los registros del formulario
     $entries = $wpdb->get_results(
-      $wpdb->prepare("SELECT id, submitted_at FROM {$table_entries} WHERE form_id = %d ORDER BY id ASC", $form_id),
+      $wpdb->prepare("SELECT * FROM {$table_entries} WHERE form_id = %d ORDER BY id ASC", $form_id),
       ARRAY_A
     );
 
     if (empty($entries)) {
       fputcsv($output, ['No hay registros']);
-      fclose($output);
       exit;
     }
 
-    // 2. Obtener lista de labels (columnas) en orden de aparición
-    // usamos JOIN para tomar el primer entry donde aparece cada label y ordenar por esa aparición
-    $labels_rows = $wpdb->get_results(
-      $wpdb->prepare(
-        "SELECT COALESCE(m.field_label, m.field_name) AS label, MIN(m.entry_id) AS first_entry
-               FROM {$table_meta} m
-               INNER JOIN {$table_entries} e ON e.id = m.entry_id
-               WHERE e.form_id = %d
-               GROUP BY COALESCE(m.field_label, m.field_name)
-               ORDER BY first_entry ASC",
-        $form_id
-      ),
-      ARRAY_A
-    );
+    // 2. Reunir todos los field_label que existan
+    $all_labels = [];
 
-    $labels = [];
-    foreach ($labels_rows as $r) {
-      $lbl = trim($r['label']);
-      if ($lbl === '') continue;
-      $labels[] = $lbl;
-    }
-    
-    // Header CSV: ID registro, Fecha, <labels...>
-    $header = array_merge(['ID Registro', 'Fecha del registro'], $labels);
-    fputcsv($output, $header);
-
-    // 3. Para cada entry, construir fila usando field_label como columna
     foreach ($entries as $entry) {
+
       $meta = $wpdb->get_results(
-        $wpdb->prepare("SELECT field_label, field_name, field_value FROM {$table_meta} WHERE entry_id = %d", $entry['id']),
+        $wpdb->prepare("SELECT field_label FROM {$table_meta} WHERE entry_id = %d", $entry['id']),
         ARRAY_A
       );
 
-      // Mapear label => value
-      $row_map = [];
       foreach ($meta as $m) {
-        $label = $m['field_label'] ?: $m['field_name'];
-        $value = $m['field_value'];
+        $label = trim($m['field_label']);
+        $all_labels[$label] = $label;
+      }
+    }
 
-        // Si value está serializado -> deserializar
-        if (is_serialized($value)) {
-          $un = maybe_unserialize($value);
-          if (is_array($un)) {
-            // convertir a texto legible
-            $value = implode(', ', array_map('strval', $un));
-          } else {
-            $value = strval($un);
-          }
+    // Ordenar labels alfabéticamente
+    ksort($all_labels);
+
+    // 3. Armar encabezado
+    $header = [
+      'ID Registro',
+      'Fecha',
+      'URL de Envío',
+      'Archivos Enviados'
+    ];
+
+    $header = array_merge($header, array_values($all_labels));
+    fputcsv($output, $header);
+
+    // 4. Generar filas
+    foreach ($entries as $entry) {
+
+      // Obtener metadatos (campos del formulario)
+      $meta = $wpdb->get_results(
+        $wpdb->prepare(
+          "SELECT field_label, field_value FROM {$table_meta} WHERE entry_id = %d",
+          $entry['id']
+        ),
+        ARRAY_A
+      );
+
+      // Convertir meta a key-value por label
+      $meta_data = [];
+      foreach ($meta as $m) {
+        $value = maybe_unserialize($m['field_value']);
+        if (is_array($value)) {
+          $value = implode(', ', $value);
         }
-
-        // Limpieza mínima para CSV
-        $row_map[$label] = $value;
+        $meta_data[$m['field_label']] = $value;
       }
 
-      // Construir fila en el orden del header
-      $row = [];
-      $row[] = $entry['id'];
-      $row[] = $entry['submitted_at'] ?? '';
+      // Obtener archivos del registro
+      $files = $wpdb->get_results(
+        $wpdb->prepare(
+          "SELECT file_url FROM {$table_files} WHERE entry_id = %d",
+          $entry['id']
+        ),
+        ARRAY_A
+      );
 
-      foreach ($labels as $lbl) {
-        $row[] = isset($row_map[$lbl]) ? $row_map[$lbl] : '';
+      $file_list = [];
+      foreach ($files as $f) {
+        $file_list[] = $f['file_url'];
+      }
+
+      $file_list_text = implode(' | ', $file_list);
+
+      // Armar la fila completa
+      $row = [
+        $entry['id'],
+        $entry['created_at'],
+        $entry['url_register'],
+        $file_list_text
+      ];
+
+      // Añadir campos dinámicos ordenados por label
+      foreach ($all_labels as $label) {
+        $row[] = isset($meta_data[$label]) ? $meta_data[$label] : '';
       }
 
       fputcsv($output, $row);
