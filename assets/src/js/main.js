@@ -2,8 +2,8 @@ const $ = jQuery;
 const d = document;
 
 class SimpleField {
-  static numberField = 1; // Si el nombre del campo es field_ usa esta variable
-  static numberTextarea = 1; // Si el nombre del campo es textarea_ se usa esta variable
+  static numberField = 1; // Usar esta variable cuando el campo es field_
+  static numberTextarea = 1; // Usar esta variable cuando el campo es textarea_
 
   constructor(type, label, required, extras, editing) {
     this.type = type;
@@ -50,7 +50,7 @@ class SimpleField {
   }
 
   static CreateJSONField(type, label, required, extras, fieldName) {
-    const fieldObjProperties = {}; // Objeto que guardará los datos del campo
+    const fieldObjProperties = {}; // Guarda los datos del campo en un objeto
 
     // Se construye el objeto del campo
     fieldObjProperties[fieldName] = {
@@ -72,14 +72,12 @@ class SimpleField {
     const detailsField = d.createElement('DIV'); // Label de input
     const btnEditField = d.createElement('button'); // Botón de editar
     const btnDeleteField = d.createElement('button'); // Botón para eliminar campo
-    const btnTopPosition = d.createElement('img'); // Botón de editar
-    const btnBottomPosition = d.createElement('img'); // Botón para eliminar campo
 
     $(tagFieldsetWrapper).addClass('field-form');
     $(tagFieldsetWrapper).attr('draggable', 'true');
     $(detailsField).addClass('form-field');
 
-    // Botones editar/borrar/Subir/Bajar
+    // Botones editar/borrar
     btnEditField.textContent = "Editar";
     btnEditField.classList.add('btn-primary', `btn-edit-field`);
     btnEditField.setAttribute('type', 'button');
@@ -122,8 +120,6 @@ class SimpleField {
       fragmentField.appendChild(detailsField);
       fragmentField.append(btnEditField);
       fragmentField.append(btnDeleteField);
-      fragmentField.append(btnTopPosition);
-      fragmentField.append(btnBottomPosition);
       tagFieldsetWrapper.append(fragmentField);
 
       return tagFieldsetWrapper;
@@ -635,13 +631,13 @@ jQuery(function ($) {
       id: formId,
       version: 1,
       fields: dataFields,
-      submit_btn: {
-        submit_type: "send",
-        label: formBtnLabel
-      },
+      // submit_btn: {
+      //   submit_type: "send",
+      //   label: formBtnLabel
+      // },
       settings: {
         titulo: formTitle,
-        email_list: formEmails,
+        // email_list: formEmails,
       }
     };
 
@@ -649,7 +645,7 @@ jQuery(function ($) {
     let isValid = notAllowFieldsEmpty(basicInfoForm);
     if (!isValid) return;
 
-    // 🔹 Importante: actualizar el JSON en la vista previa
+    // Actualizar el JSON en la vista previa
     $formPreview.attr('data-json-form', JSON.stringify(formData));
 
     $.ajax({

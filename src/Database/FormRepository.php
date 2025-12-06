@@ -25,8 +25,8 @@ class SimpleForms_FormsRepository
     global $wpdb;
 
     $data = [
-      'form_name'   => sanitize_text_field($form['id']),
-      'form_title' => sanitize_text_field($form['settings']['titulo']),
+      'form_name'   => to_slug(sanitize_text_field($form['settings']['titulo'])),
+      'form_title'  => sanitize_text_field($form['settings']['titulo']),
       'version'     => intval($form['version']),
       'form_fields' => wp_json_encode($form['fields'], JSON_UNESCAPED_UNICODE),
       'shortcode'   => '[simple_form id="' . sanitize_text_field($form['id']) . '"]',
@@ -44,9 +44,9 @@ class SimpleForms_FormsRepository
       $wpdb->update(
         $this->table_schemas,
         $data,
-        ['id' => $exists],
+        ['form_name' => $data['form_name']],
         ['%s', '%s', '%d', '%s', '%s', '%s'],
-        ['%d']
+        ['%s']
       );
     } else {
       $data['created_at'] = current_time('mysql');

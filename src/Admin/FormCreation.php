@@ -73,25 +73,25 @@ function simple_forms_render_page()
               $data_field = [];
 
               // Recorrer los campos del formulario
-              if($form['form_fields']) {
+              if ($form['form_fields']) {
                 foreach ($form['form_fields'] as $field_id => $field_data) {
                   $data_field = [];  // Alamcenar el data de cada campo
-  
+
                   // Convierte el array a JSON
                   $field_json = json_encode($field_data);
-  
+
                   // Manejo de errores en la codificación JSON (IMPORTANTE)
                   if ($field_json === false) {
                     error_log("Error al codificar JSON para el campo " . $field_id . ": " . json_last_error_msg());
                     $field_json = '{"error": "Error al procesar datos"}'; // Valor por defecto en caso de error
                   }
-  
+
                   $data_field[$field_id] = json_decode($field_json);
-  
+
                   $icon_up = PLUGIN_URL . 'assets/src/images/up.svg';
                   $icon_down = PLUGIN_URL . 'assets/src/images/down.svg';
                   $icon_directions = PLUGIN_URL . 'assets/src/images/directions.svg';
-  
+
                   $field_schema .= '
                         <div class="field-form" draggable="true" data-field-id="' . $field_id . '" data-info-field="' . htmlspecialchars(json_encode($data_field)) . '">
                           <div class="form-field">
@@ -114,15 +114,25 @@ function simple_forms_render_page()
 
         <div class="fields-hidden">
           <input type="hidden" id="simpleforms-edit-form-id" value="<?php echo isset($_GET['form_id']) ? esc_attr($_GET['form_id']) : '' ?>">
-          <div class="form-settings form-emails">
+          <!-- <div class="form-settings form-emails">
             <span>Correos de notificación</span>
-            <input type="text" placeholder="correos separados por coma (,)" class="emails-form info-form" id="emails-form" value="<?php echo (isset($_GET['form_id']) && isset($form['settings']['email_list'])) ? $form['settings']['email_list'] : ''  ?>">
-          </div>
+            <input
+              type="text"
+              placeholder="correos separados por coma (,)"
+              class="emails-form info-form"
+              id="emails-form"
+              value="">
+          </div> -->
 
-          <div class="form-settings form-btn-label">
+          <!-- <div class="form-settings form-btn-label">
             <span>Etiqueta del botón</span>
-            <input type="text" placeholder="Enviar" class="label-button info-form" id="label-button" value="<?php echo (isset($_GET['form_id']) && isset($form['submit_btn']['label'])) ? $form['submit_btn']['label'] : ''  ?>">
-          </div>
+            <input
+              type="text"
+              placeholder="Enviar"
+              class="label-button info-form"
+              id="label-button"
+              value="">
+          </div> -->
         </div>
 
         <?php wp_nonce_field('simple_forms_save_action', 'simple_forms_nonce'); ?>

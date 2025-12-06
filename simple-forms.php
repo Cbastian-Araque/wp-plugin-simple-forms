@@ -6,12 +6,33 @@
  * Author URI: https://cbastian-araque.github.io/My-Portfolio/
  * Plugin URI: https://github.com/Cbastian-Araque/wp-plugin-simple-forms
  * Description: Create your form since a UI, copy the shortcode generated and paste on your page.
- * Version: 1.0.1
+ * Version: 2.0.1
  * Requires at least: 6.5
  * Requires PHP: 8
  * License: GPLv3
  * Text Domain: simple-forms
  */
+
+function to_slug($text)
+{
+    // Convertir a minúsculas
+    $text = strtolower($text);
+
+    // Reemplazar caracteres con acentos
+    $text = str_replace(
+        ['á', 'é', 'í', 'ó', 'ú', 'ñ'],
+        ['a', 'e', 'i', 'o', 'u', 'n'],
+        $text
+    );
+
+    // Reemplazar espacios por guiones bajos
+    $text = preg_replace('/\s+/', '_', $text);
+
+    // Eliminar caracteres no permitidos (solo a-z, 0-9 y _)
+    $text = preg_replace('/[^a-z0-9_]/', '', $text);
+
+    return $text;
+}
 
 if (!defined('ABSPATH')) exit; // Evita acceso directo
 define('PLUGIN_FILE', __FILE__); // Obtener la información del plugin (header)
