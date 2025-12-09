@@ -101,14 +101,15 @@ class SimpleForms_FormsRepository
       return false; // ID inválido
     }
 
-    // 1. Verificar si el formulario existe
+    // Obtener el ID del formulario
     $form = $wpdb->get_row(
       $wpdb->prepare("SELECT * FROM {$this->table_schemas} WHERE id = %d", $form_id),
       ARRAY_A
     );
 
+    // Verificar si el formulario existe
     if (!$form) {
-      return false; // no existe
+      return false;
     }
 
     // Tablas secundarias
@@ -116,7 +117,7 @@ class SimpleForms_FormsRepository
     $table_records_meta = $this->prefix . TABLE_PREFIX . TABLE_ENTRY_META;
     $table_files        = $this->prefix . TABLE_PREFIX . TABLE_FILES;
 
-    // 2. Obtener todos los registros del formulario
+    // Obtener todos los registros del formulario
     $entries = $wpdb->get_col(
       $wpdb->prepare("SELECT id FROM {$table_records} WHERE form_id = %d", $form_id)
     );
@@ -126,17 +127,17 @@ class SimpleForms_FormsRepository
       // Crear lista segura de IDs
       $entries_list = implode(',', array_map('intval', $entries));
 
-      // 3. Eliminar metadata
+      // Eliminar metadata
       $wpdb->query("DELETE FROM {$table_records_meta} WHERE entry_id IN ($entries_list)");
 
-      // 4. Eliminar archivos
+      // Eliminar archivos
       $wpdb->query("DELETE FROM {$table_files} WHERE entry_id IN ($entries_list)");
 
-      // 5. Eliminar registros principales
+      // Eliminar registros principales
       $wpdb->query("DELETE FROM {$table_records} WHERE id IN ($entries_list)");
     }
 
-    // 6. Eliminar el formulario
+    // Eliminar el formulario
     return $wpdb->delete(
       $this->table_schemas,
       ['id' => $form_id],

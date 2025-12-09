@@ -23,7 +23,7 @@ function simple_forms_reports_details_cb()
   echo '<div class="wrap">';
 
   // ---------------------------
-  // Vista detalle por formulario
+  // Resumen detallado por formulario
   // ---------------------------
   if (isset($_GET['form_id']) && is_numeric($_GET['form_id'])) {
 
@@ -45,7 +45,7 @@ function simple_forms_reports_details_cb()
 
     echo "<div style='display: flex; gap: 20px; align-items:center'>";
     echo '<p><a href="' . esc_url(admin_url('admin.php?page=forms-reports')) . '" class="button">← Volver al listado</a></p>';
-    echo '<a href="'.esc_url($export_url).'" class="button button-primary">📥 Descargar CSV</a>';
+    echo '<a href="' . esc_url($export_url) . '" class="button button-primary">📥 Descargar CSV</a>';
     echo "</div>";
 
     /** Obtener registros del formulario */
@@ -112,8 +112,7 @@ function simple_forms_reports_details_cb()
           $label = esc_html($m['field_label']);
           $value = $m['field_value'];
 
-          // ¿Es un valor serializado?
-          if (is_serialized($value)) {
+          if (is_serialized($value)) { // Si esta serializado se decoifica
 
             $array = maybe_unserialize($value);
 
@@ -152,7 +151,7 @@ function simple_forms_reports_details_cb()
           // Nombre de archivo legible
           $filename = $url ? basename($url) : ($path ? basename($path) : 'archivo');
 
-          // Seguridad: validar URL y escapar
+          // validación de URL y limpiarla
           $url_esc = esc_url($url);
 
           // Texto del enlace (nombre + tipo + tamaño)
@@ -167,7 +166,7 @@ function simple_forms_reports_details_cb()
             echo '<div><small>' . esc_html($extra_str) . '</small><small style="color:#777;font-size:12px;"> — campo: ' . esc_html($f['field_name']) . '</small></div>';
             echo '</li>';
           } else {
-            // Si no hay URL pero sí path local, intentar mostrar path
+            // Si no hay URL, mostrar path
             if ($path) {
               echo '<li>' . esc_html(basename($path)) . ($size ? ' (' . sf_human_filesize($size) . ')' : '') . ' <em>(ruta guardada)</em></li>';
             } else {
@@ -190,18 +189,17 @@ function simple_forms_reports_details_cb()
     echo '</table>';
     echo '</div>';
 
-    return; // <-- terminar aquí
+    return;
   }
 
   // ---------------------------
-  // Vista lista general (si no viene form_id)
+  // Reporte resumido de los formularios
   // ---------------------------
 
   echo '<h1 class="title-option-page">Reporte de envíos de formularios</h1>';
 
   // Obtener formularios
   $forms = $wpdb->get_results("SELECT f.id, f.form_name, f.form_title FROM {$table_forms} AS f INNER JOIN {$table_records} AS e ON f.id = e.form_id GROUP BY f.id", ARRAY_A);
-  // $forms = $wpdb->get_results("SELECT id, form_name, form_title FROM {$table_forms}", ARRAY_A);
 
   if (!$forms) {
     echo '<p>No hay registros para mostrar.</p>';
@@ -231,7 +229,7 @@ function simple_forms_reports_details_cb()
       )
     );
 
-    // Registros últimos 7 días
+    // Registros de los últimos 7 días
     $registros_semana = $wpdb->get_var(
       $wpdb->prepare(
         "SELECT COUNT(*) 
@@ -255,5 +253,5 @@ function simple_forms_reports_details_cb()
 
   echo '</tbody>';
   echo '</table>';
-  echo '</div>'; // wrap
+  echo '</div>';
 }

@@ -5,11 +5,11 @@ function simple_forms_listing_cb()
   $results = $get_forms->get_all_forms();
 
   if (empty($results)) {
-    printf("<h3>%s</h3>",__('No hay formularios para mostrar.', 'simple-forms'));
+    printf("<h3>%s</h3>", __('No hay formularios para mostrar.', 'simple-forms'));
     return;
   }
 
-  // Convertir cada form_fields (que es JSON en la DB)
+  // Decodificar cada form_field (que es JSON en la DB)
   foreach ($results as $key => $form) {
     $results[$key]['form_fields'] = json_decode($form['form_fields'], true);
   }
@@ -20,20 +20,21 @@ function simple_forms_listing_cb()
   <section class="simple-forms-list-container wrap">
     <?php printf('<h1 class="title-option-page">%s</h1>', __('Listado de Formularios', 'simple-forms')) ?>
 
-    <a href="<?php echo admin_url('admin.php?page=simple-forms') ?>" class="button button-primary"><?php echo __('Crear Nuevo Formulario','simple-forms') ?></a>
+    <a href="<?php echo admin_url('admin.php?page=simple-forms') ?>" class="button button-primary"><?php echo __('Crear Nuevo Formulario', 'simple-forms') ?></a>
     <table class="wp-list-table widefat fixed striped" id="table_simple_form_list">
       <thead>
         <tr>
-          <th class="" colspan=""><?php echo __('ID del formulario','simple-forms') ?></th>
-          <th class="" colspan=""><?php echo __('Título','simple-forms') ?></th>
-          <th class="" colspan=""><?php echo __('Shortcode','simple-forms') ?></th>
-          <th class="" colspan=""><?php echo __('Campos','simple-forms') ?></th>
-          <th class="" colspan=""><?php echo __('Acciones','simple-forms') ?></th>
+          <th class="" colspan=""><?php echo __('ID del formulario', 'simple-forms') ?></th>
+          <th class="" colspan=""><?php echo __('Título', 'simple-forms') ?></th>
+          <th class="" colspan=""><?php echo __('Shortcode', 'simple-forms') ?></th>
+          <th class="" colspan=""><?php echo __('Campos', 'simple-forms') ?></th>
+          <th class="" colspan=""><?php echo __('Acciones', 'simple-forms') ?></th>
         </tr>
       </thead>
 
       <tbody>
-        <?php if ($forms) : // Aquí cargarás los formularios almacenados ?>
+        <?php // Mostrar los formularios almacenados
+        if ($forms) : ?>
           <?php foreach ($forms as $form) : ?>
             <tr>
               <td><?php echo $form['id'] ?></td>
@@ -41,8 +42,8 @@ function simple_forms_listing_cb()
               <td class="shortcode_form"><?php echo $form['shortcode'] ?></td>
               <td class="cccc"><?php echo count($form['form_fields']) ?></td>
               <td>
-                <a href="admin.php?page=simple-forms&form_id=<?php echo $form['id'] . '&form_title=' . $form['form_title'] ?>" class="button btn-primary"><?php echo __('Editar','simple-forms') ?></a>
-                <a href="#" class="delete-form button btn-caution" data-id="<?php echo $form['id']?>">Eliminar</a>
+                <a href="admin.php?page=simple-forms&form_id=<?php echo $form['id'] . '&form_title=' . $form['form_title'] ?>" class="button btn-primary"><?php echo __('Editar', 'simple-forms') ?></a>
+                <a href="#" class="delete-form button btn-caution" data-id="<?php echo $form['id'] ?>">Eliminar</a>
               </td>
             </tr>
           <?php endforeach; ?>

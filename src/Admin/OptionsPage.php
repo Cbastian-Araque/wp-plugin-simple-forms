@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Página de opciones del plugin (panel WP)
  */
@@ -19,23 +20,24 @@ function simple_forms_add_admin_menu()
 
 // Subpágina de opciones
 add_action('admin_menu', 'simple_forms_subp_reports');
-function simple_forms_subp_reports() {
+function simple_forms_subp_reports()
+{
 
-    // Añadir subpágina bajo el menú principal con slug 'plugin-options'
-    add_submenu_page(
-        'simple-forms',        // Slug de la página padre
-        'Consultar registros',              // Título de la página
-        'Ver registros',              // Texto del menú
-        'manage_options',        // Capacidad necesaria
-        'forms-reports', // Slug único para la subpágina
-        'simple_forms_reports_details_cb' // Función callback que renderiza la página
-    );
-    add_submenu_page(
-        'simple-forms',        // Slug de la página padre
-        'Listado de formularios',              // Título de la página
-        'Ver formularios',              // Texto del menú
-        'manage_options',        // Capacidad necesaria
-        'form-listing', // Slug único para la subpágina
-        'simple_forms_listing_cb' // Función callback que renderiza la página
-    );
+  // Añadir subpágina bajo el menú principal con slug 'plugin-options'
+  add_submenu_page(
+    'simple-forms',        // Slug de la página padre
+    'Consultar registros',              // Título de la página
+    'Ver registros',              // Texto del menú
+    'manage_options',        // Capacidad necesaria
+    'forms-reports', // Slug único para la subpágina
+    'simple_forms_reports_details_cb' // Función callback que renderiza la página
+  );
+  add_submenu_page(
+    'simple-forms',        // Slug de la página padre
+    'Listado de formularios',              // Título de la página
+    'Ver formularios',              // Texto del menú
+    'manage_options',        // Capacidad necesaria
+    'form-listing', // Slug único para la subpágina
+    'simple_forms_listing_cb' // Función callback que renderiza la página
+  );
 }

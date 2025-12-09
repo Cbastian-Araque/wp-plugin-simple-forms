@@ -185,7 +185,7 @@ class FormRenderer
                     echo "<p>Tipo de campo no soportado: $type</p>";
             }
 
-            echo "</fieldset>"; // fin sf-field
+            echo "</fieldset>";
         }
 
         echo '<button type="submit">Enviar</button>';
